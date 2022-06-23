@@ -297,6 +297,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.setLimitsToComboBox(0, 100)
 
         self.SelectLogoButton.clicked.connect(self.ImportLogo)
+        self.pushButton.clicked.connect(self.ApplyChanges)
 
         self.LogoSizeWidthBox.valueChanged.connect(self.a)
         self.LogoSizeWidth.valueChanged.connect(self.b)
@@ -309,6 +310,16 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
 
         self.LogoPositionHeightBox.valueChanged.connect(self.g)
         self.LogoPositionHeight.valueChanged.connect(self.h)
+
+    def ApplyChanges(self):
+        if not len(self.label.text()) == 0:
+            file = open("Setup.txt", "w")
+            file.writelines(self.label.text() + "\n")
+            file.writelines(str(self.LogoSizeWidthBox.value()) + "\n")
+            file.writelines(str(self.LogoSizeHeightBox.value()) + "\n")
+            file.writelines(str(self.LogoPositionWidthBox.value()) + "\n")
+            file.writelines(str(self.LogoPositionHeightBox.value()))
+            file.close()
 
     def ImportLogo(self):
         filename = QFileDialog.getOpenFileName(self, 'Logo',

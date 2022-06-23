@@ -6,6 +6,8 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject
 from PyQt5.QtWidgets import QFileDialog
 
+import LogoSetting
+
 
 def AddLogo(FilePath):
     # Opening the primary image (used in background)
@@ -184,6 +186,17 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setAcceptDrops(True)
         self.ImportImageButton.clicked.connect(self.ImportData)
         self.ConvertButton.clicked.connect(SaveNewImage)
+        self.actionSettings.triggered.connect(self.openLogoSetting)
+
+    # Open the test model window
+    def openLogoSetting(self):
+        self.window = QtWidgets.QMainWindow()
+        self.window = LogoSetting.MyWindow()
+        self.window.show()
+        self.window.pushButton.clicked.connect(self.update)
+
+    def update(self):
+        print("hi")
 
     # Open file dialog to import data
     def ImportData(self):
