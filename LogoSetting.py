@@ -2,6 +2,8 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject
 from PyQt5.QtWidgets import QFileDialog
 
+import SetupFile
+
 
 class Ui_Form(QObject):
     def setupUi(self, Form):
@@ -9,7 +11,7 @@ class Ui_Form(QObject):
         Form.resize(660, 400)
         Form.setMinimumSize(QtCore.QSize(0, 0))
         Form.setMaximumSize(QtCore.QSize(660, 400))
-        Form.setStyleSheet("background-color: rgb(255, 241, 171)")
+        Form.setStyleSheet(SetupFile.MainBackground)
 
         self.verticalLayout = QtWidgets.QVBoxLayout(Form)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -18,34 +20,14 @@ class Ui_Form(QObject):
         self.horizontalLayout.setObjectName("horizontalLayout")
 
         self.SelectLogoButton = QtWidgets.QPushButton(Form)
-        self.SelectLogoButton.setStyleSheet("QPushButton {\n"
-                                            "    background-color: rgb(107, 0, 0);\n"
-                                            "    border-style: outset;\n"
-                                            "    border-width: 1px;\n"
-                                            "    border-radius: 10px;\n"
-                                            "    border-color:white;\n"
-                                            "    color: rgb(255, 241, 171);\n"
-                                            "    font: bold 12px;\n"
-                                            "    min-width: 10em;\n"
-                                            "    padding: 6px;\n"
-                                            "}\n"
-                                            "QPushButton:hover {\n"
-                                            "    color: white;\n"
-                                            "}")
+        self.SelectLogoButton.setStyleSheet(SetupFile.Button)
         self.SelectLogoButton.setObjectName("SelectLogoButton")
         self.horizontalLayout.addWidget(self.SelectLogoButton)
 
         self.label = QtWidgets.QLabel(Form)
         self.label.setMinimumSize(QtCore.QSize(300, 0))
         self.label.setMaximumSize(QtCore.QSize(600, 30))
-        self.label.setStyleSheet("QLabel{\n"
-                                 "     border: 1px solid;\n"
-                                 "    border-style: outset;\n"
-                                 "    border-width: 1px;\n"
-                                 "    border-radius: 10px;\n"
-                                 "    \n"
-                                 "    background-color: rgb(255, 255, 255);\n"
-                                 "     }")
+        self.label.setStyleSheet(SetupFile.FilePath)
         self.label.setText("")
         self.label.setObjectName("label")
         self.horizontalLayout.addWidget(self.label)
@@ -80,33 +62,13 @@ class Ui_Form(QObject):
         self.LogoSizeWidth = QtWidgets.QSlider(Form)
         self.LogoSizeWidth.setMinimumSize(QtCore.QSize(100, 0))
         self.LogoSizeWidth.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.LogoSizeWidth.setStyleSheet("QSlider::groove:horizontal {\n"
-                                         "    border: 1px solid black;\n"
-                                         "    height: 8px;\n"
-                                         "    background: solid white;\n"
-                                         "    margin: 2px 0;\n"
-                                         "}\n"
-                                         "\n"
-                                         "QSlider::handle:horizontal {\n"
-                                         "    background: rgb(107, 0, 0);\n"
-                                         "    border: 1px solid black;\n"
-                                         "    width: 18px;\n"
-                                         "    margin: -2px 0; \n"
-                                         "    border-radius: 3px;\n"
-                                         "}")
+        self.LogoSizeWidth.setStyleSheet(SetupFile.Slider)
         self.LogoSizeWidth.setOrientation(QtCore.Qt.Horizontal)
         self.LogoSizeWidth.setObjectName("LogoSizeWidth")
         self.horizontalLayout_3.addWidget(self.LogoSizeWidth)
 
         self.LogoSizeWidthBox = QtWidgets.QSpinBox(Form)
-        self.LogoSizeWidthBox.setStyleSheet("QSpinBox{\n"
-                                            "    border-style: outset;\n"
-                                            "    border-width: 1px;\n"
-                                            "    border-radius: 10px;\n"
-                                            "    border-color:black;\n"
-                                            "    color: solid black;\n"
-                                            "    background-color: white;\n"
-                                            "    }")
+        self.LogoSizeWidthBox.setStyleSheet(SetupFile.SpinBox)
         self.LogoSizeWidthBox.setObjectName("LogoSizeWidthBox")
 
         self.horizontalLayout_3.addWidget(self.LogoSizeWidthBox)
@@ -124,33 +86,13 @@ class Ui_Form(QObject):
         self.LogoSizeHeight = QtWidgets.QSlider(Form)
         self.LogoSizeHeight.setMinimumSize(QtCore.QSize(100, 0))
         self.LogoSizeHeight.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.LogoSizeHeight.setStyleSheet("QSlider::groove:horizontal {\n"
-                                          "    border: 1px solid black;\n"
-                                          "    height: 8px;\n"
-                                          "    background: solid white;\n"
-                                          "    margin: 2px 0;\n"
-                                          "}\n"
-                                          "\n"
-                                          "QSlider::handle:horizontal {\n"
-                                          "    background: rgb(107, 0, 0);\n"
-                                          "    border: 1px solid black;\n"
-                                          "    width: 18px;\n"
-                                          "    margin: -2px 0; \n"
-                                          "    border-radius: 3px;\n"
-                                          "}")
+        self.LogoSizeHeight.setStyleSheet(SetupFile.Slider)
         self.LogoSizeHeight.setMaximum(100)
         self.LogoSizeHeight.setOrientation(QtCore.Qt.Horizontal)
         self.LogoSizeHeight.setObjectName("LogoSizeHeight")
         self.horizontalLayout_4.addWidget(self.LogoSizeHeight)
         self.LogoSizeHeightBox = QtWidgets.QSpinBox(Form)
-        self.LogoSizeHeightBox.setStyleSheet("QSpinBox{\n"
-                                             "    border-style: outset;\n"
-                                             "    border-width: 1px;\n"
-                                             "    border-radius: 10px;\n"
-                                             "    border-color:black;\n"
-                                             "    background-color: white;\n"
-                                             "    color: solid black;\n"
-                                             "    }")
+        self.LogoSizeHeightBox.setStyleSheet(SetupFile.SpinBox)
         self.LogoSizeHeightBox.setObjectName("LogoSizeHeightBox")
         self.horizontalLayout_4.addWidget(self.LogoSizeHeightBox)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -176,33 +118,13 @@ class Ui_Form(QObject):
         self.LogoPositionWidth = QtWidgets.QSlider(Form)
         self.LogoPositionWidth.setMinimumSize(QtCore.QSize(100, 0))
         self.LogoPositionWidth.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.LogoPositionWidth.setStyleSheet("QSlider::groove:horizontal {\n"
-                                             "    border: 1px solid black;\n"
-                                             "    height: 8px;\n"
-                                             "    background: solid white;\n"
-                                             "    margin: 2px 0;\n"
-                                             "}\n"
-                                             "\n"
-                                             "QSlider::handle:horizontal {\n"
-                                             "    background: rgb(107, 0, 0);\n"
-                                             "    border: 1px solid black;\n"
-                                             "    width: 18px;\n"
-                                             "    margin: -2px 0; \n"
-                                             "    border-radius: 3px;\n"
-                                             "}")
+        self.LogoPositionWidth.setStyleSheet(SetupFile.Slider)
         self.LogoPositionWidth.setMaximum(100)
         self.LogoPositionWidth.setOrientation(QtCore.Qt.Horizontal)
         self.LogoPositionWidth.setObjectName("LogoPositionWidth")
         self.horizontalLayout_7.addWidget(self.LogoPositionWidth)
         self.LogoPositionWidthBox = QtWidgets.QSpinBox(Form)
-        self.LogoPositionWidthBox.setStyleSheet("QSpinBox{\n"
-                                                "    border-style: outset;\n"
-                                                "    border-width: 1px;\n"
-                                                "    border-radius: 10px;\n"
-                                                "    border-color:black;\n"
-                                                "    background-color: white;\n"
-                                                "    color: solid black;\n"
-                                                "    }")
+        self.LogoPositionWidthBox.setStyleSheet(SetupFile.SpinBox)
         self.LogoPositionWidthBox.setObjectName("LogoPositionWidthBox")
         self.horizontalLayout_7.addWidget(self.LogoPositionWidthBox)
         spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -217,33 +139,13 @@ class Ui_Form(QObject):
         self.LogoPositionHeight = QtWidgets.QSlider(Form)
         self.LogoPositionHeight.setMinimumSize(QtCore.QSize(100, 0))
         self.LogoPositionHeight.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.LogoPositionHeight.setStyleSheet("QSlider::groove:horizontal {\n"
-                                              "    border: 1px solid black;\n"
-                                              "    height: 8px;\n"
-                                              "    background: solid white;\n"
-                                              "    margin: 2px 0;\n"
-                                              "}\n"
-                                              "\n"
-                                              "QSlider::handle:horizontal {\n"
-                                              "    background: rgb(107, 0, 0);\n"
-                                              "    border: 1px solid black;\n"
-                                              "    width: 18px;\n"
-                                              "    margin: -2px 0; \n"
-                                              "    border-radius: 3px;\n"
-                                              "}")
+        self.LogoPositionHeight.setStyleSheet(SetupFile.Slider)
         self.LogoPositionHeight.setMaximum(100)
         self.LogoPositionHeight.setOrientation(QtCore.Qt.Horizontal)
         self.LogoPositionHeight.setObjectName("LogoPositionHeight")
         self.horizontalLayout_8.addWidget(self.LogoPositionHeight)
         self.LogoPositionHeightBox = QtWidgets.QSpinBox(Form)
-        self.LogoPositionHeightBox.setStyleSheet("QSpinBox{\n"
-                                                 "    border-style: outset;\n"
-                                                 "    border-width: 1px;\n"
-                                                 "    border-radius: 10px;\n"
-                                                 "    border-color:black;\n"
-                                                 "    background-color: white;\n"
-                                                 "    color: solid black;\n"
-                                                 "    }")
+        self.LogoPositionHeightBox.setStyleSheet(SetupFile.SpinBox)
         self.LogoPositionHeightBox.setObjectName("LogoPositionHeightBox")
         self.horizontalLayout_8.addWidget(self.LogoPositionHeightBox)
         spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -256,20 +158,7 @@ class Ui_Form(QObject):
         spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem7)
         self.pushButton = QtWidgets.QPushButton(Form)
-        self.pushButton.setStyleSheet("QPushButton {\n"
-                                      "    background-color: rgb(107, 0, 0);\n"
-                                      "    border-style: outset;\n"
-                                      "    border-width: 1px;\n"
-                                      "    border-radius: 10px;\n"
-                                      "    border-color:white;\n"
-                                      "    color: rgb(255, 241, 171);\n"
-                                      "    font: bold 12px;\n"
-                                      "    min-width: 10em;\n"
-                                      "    padding: 6px;\n"
-                                      "}\n"
-                                      "QPushButton:hover {\n"
-                                      "    color: white;\n"
-                                      "}")
+        self.pushButton.setStyleSheet(SetupFile.Button)
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout_2.addWidget(self.pushButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
@@ -291,7 +180,7 @@ class Ui_Form(QObject):
 
 
 def getValuesFromFile():
-    file = open("Setup.txt", "r")
+    file = open(SetupFile.SetUpFilePath, "r")
     FilePath = file.readline().strip()
     LogoSizeWidth = int(file.readline().strip())
     LogoSizeHeight = int(file.readline().strip())
@@ -338,7 +227,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
 
     def ApplyChanges(self):
         if not len(self.label.text()) == 0:
-            file = open("Setup.txt", "w")
+            file = open(SetupFile.SetUpFilePath, "w")
             file.writelines(self.label.text() + "\n")
             file.writelines(str(self.LogoSizeWidthBox.value()) + "\n")
             file.writelines(str(self.LogoSizeHeightBox.value()) + "\n")

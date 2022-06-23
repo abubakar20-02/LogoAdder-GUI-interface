@@ -7,10 +7,12 @@ from PyQt5.QtCore import QObject
 from PyQt5.QtWidgets import QFileDialog
 
 import LogoSetting
+import SetupFile
 
 
 def AddLogo(OriginalImage):
     LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
+    print(SetupFile.SavedPath)
     # Opening the primary image (used in background)
     print(LogoPath)
     img1 = Image.open(OriginalImage)
@@ -32,14 +34,14 @@ def AddLogo(OriginalImage):
     # starting at coordinates (0, 0)
     img1.paste(img2, (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)), img2)
 
-    img1.save("saved.png")
+    img1.save(SetupFile.SavedPath)
 
 
 class Ui_MainWindow(QObject):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(690, 542)
-        MainWindow.setStyleSheet("background-color: rgb(255, 241, 171)")
+        MainWindow.setStyleSheet(SetupFile.MainBackground)
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -58,11 +60,7 @@ class Ui_MainWindow(QObject):
         self.OriginalImage = QtWidgets.QLabel(self.centralwidget)
         self.OriginalImage.setMinimumSize(QtCore.QSize(300, 375))
         self.OriginalImage.setAcceptDrops(True)
-        self.OriginalImage.setStyleSheet("QLabel{\n"
-                                         "    border: 1px solid;\n"
-                                         "    background-color: rgb(250, 250, 250);\n"
-                                         "     }\n"
-                                         "")
+        self.OriginalImage.setStyleSheet(SetupFile.EmptyImage)
         self.OriginalImage.setText("")
         self.OriginalImage.setObjectName("OriginalImage")
 
@@ -70,11 +68,7 @@ class Ui_MainWindow(QObject):
 
         self.PreviewImage = QtWidgets.QLabel(self.centralwidget)
         self.PreviewImage.setMinimumSize(QtCore.QSize(300, 375))
-        self.PreviewImage.setStyleSheet("QLabel{\n"
-                                        "    border: 1px solid;\n"
-                                        "    background-color: rgb(250, 250, 250);\n"
-                                        "     }\n"
-                                        "")
+        self.PreviewImage.setStyleSheet(SetupFile.EmptyImage)
         self.PreviewImage.setFrameShape(QtWidgets.QFrame.NoFrame)
         self.PreviewImage.setText("")
         self.PreviewImage.setObjectName("PreviewImage")
@@ -86,33 +80,13 @@ class Ui_MainWindow(QObject):
         self.InputLayout.setSpacing(10)
         self.InputLayout.setObjectName("InputLayout")
         self.ImportImageButton = QtWidgets.QPushButton(self.centralwidget)
-        self.ImportImageButton.setStyleSheet("QPushButton {\n"
-                                             "    background-color: rgb(107, 0, 0);\n"
-                                             "    border-style: outset;\n"
-                                             "    border-width: 1px;\n"
-                                             "    border-radius: 10px;\n"
-                                             "    border-color:white;\n"
-                                             "    color: rgb(255, 241, 171);\n"
-                                             "    font: bold 12px;\n"
-                                             "    min-width: 10em;\n"
-                                             "    padding: 6px;\n"
-                                             "}\n"
-                                             "QPushButton:hover {\n"
-                                             "    color: white;\n"
-                                             "}")
+        self.ImportImageButton.setStyleSheet(SetupFile.Button)
         self.ImportImageButton.setObjectName("ImportImageButton")
         self.InputLayout.addWidget(self.ImportImageButton)
         self.FilePath = QtWidgets.QLabel(self.centralwidget)
         self.FilePath.setMinimumSize(QtCore.QSize(400, 0))
         self.FilePath.setMaximumSize(QtCore.QSize(16777215, 30))
-        self.FilePath.setStyleSheet("QLabel{\n"
-                                    "     border: 1px solid;\n"
-                                    "    border-style: outset;\n"
-                                    "    border-width: 1px;\n"
-                                    "    border-radius: 10px;\n"
-                                    "    \n"
-                                    "    background-color: rgb(255, 255, 255);\n"
-                                    "     }")
+        self.FilePath.setStyleSheet(SetupFile.FilePath)
         self.FilePath.setObjectName("FilePath")
         self.InputLayout.addWidget(self.FilePath)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -124,20 +98,7 @@ class Ui_MainWindow(QObject):
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.ConvertGrid.addItem(spacerItem1)
         self.ConvertButton = QtWidgets.QPushButton(self.centralwidget)
-        self.ConvertButton.setStyleSheet("QPushButton {\n"
-                                         "    background-color: rgb(107, 0, 0);\n"
-                                         "    border-style: outset;\n"
-                                         "    border-width: 1px;\n"
-                                         "    border-radius: 10px;\n"
-                                         "    border-color:white;\n"
-                                         "    color: rgb(255, 241, 171);\n"
-                                         "    font: bold 12px;\n"
-                                         "    min-width: 10em;\n"
-                                         "    padding: 6px;\n"
-                                         "}\n"
-                                         "QPushButton:hover {\n"
-                                         "    color: white;\n"
-                                         "}")
+        self.ConvertButton.setStyleSheet(SetupFile.Button)
         self.ConvertButton.setObjectName("ConvertButton")
         self.ConvertGrid.addWidget(self.ConvertButton)
         self.MainGrid.addLayout(self.ConvertGrid, 2, 0, 1, 1)
@@ -147,9 +108,7 @@ class Ui_MainWindow(QObject):
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 690, 21))
         self.menubar.setObjectName("menubar")
-        self.menubar.setStyleSheet(
-            "QMenuBar{background-color: white}""QMenu{background-color: white}""QMenu::item:selected { ""background"
-            "-color: #1261A0;color: rgb(255,255,""255);} ")
+        self.menubar.setStyleSheet(SetupFile.MenuBar)
 
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -175,11 +134,11 @@ class Ui_MainWindow(QObject):
 
 
 def SaveNewImage():
-    if exists("saved.png"):
+    if exists(SetupFile.SavedPath):
         PDFfile, check = QFileDialog.getSaveFileName(None, "Save Image",
                                                      "Image", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
         if check:
-            img1 = Image.open("saved.png")
+            img1 = Image.open(SetupFile.SavedPath)
             img1.save(PDFfile)
             os.startfile(PDFfile)
 
@@ -210,12 +169,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                                                         "     }\n"
                                                                                         "")
             AddLogo(self.FilePath.text())
-            self.PreviewImage.setStyleSheet("QLabel{\n"
-                                            "    border: 1px solid;\n"
-                                            "    image: url(saved.png);\n"
-                                            "    background-color: gray;\n"
-                                            "     }\n"
-                                            "")
+            self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
 
     # Open file dialog to import data
     def ImportData(self):
@@ -224,21 +178,8 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                    'Image', "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
             path = filename[0]
             print(path)
-            AddLogo(path)
             self.FilePath.setText(path)
-            self.OriginalImage.setStyleSheet("QLabel{\n"
-                                             "    border: 1px solid;\n"
-                                             "    image: url(" + path + ");\n"
-                                                                        "    background-color: gray;\n"
-                                                                        "     }\n"
-                                                                        "")
-            AddLogo(self.FilePath.text())
-            self.PreviewImage.setStyleSheet("QLabel{\n"
-                                            "    border: 1px solid;\n"
-                                            "    image: url(saved.png);\n"
-                                            "    background-color: gray;\n"
-                                            "     }\n"
-                                            "")
+            self.update()
         except:
             None
 
@@ -251,26 +192,14 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def dropEvent(self, event):
         FilePath = event.mimeData().urls()[0].toLocalFile()
         try:
-            AddLogo(FilePath)
             self.FilePath.setText(FilePath)
-            self.OriginalImage.setStyleSheet("QLabel{\n"
-                                             "    border: 1px solid;\n"
-                                             "    image: url(" + self.FilePath.text() + ");\n"
-                                                                                        "    background-color: gray;\n"
-                                                                                        "     }\n"
-                                                                                        "")
-            self.PreviewImage.setStyleSheet("QLabel{\n"
-                                            "    border: 1px solid;\n"
-                                            "    image: url(saved.png);\n"
-                                            "    background-color: gray;\n"
-                                            "     }\n"
-                                            "")
+            self.update()
         except:
             print("didnt work")
 
     def closeEvent(self, event):
-        if exists("saved.png"):
-            os.remove("saved.png")
+        if exists("saved.SetupFile.SavedPath"):
+            os.remove("SetupFile.SavedPath.png")
 
 
 if __name__ == "__main__":
