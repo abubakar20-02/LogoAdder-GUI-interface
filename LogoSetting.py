@@ -295,9 +295,15 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         super().__init__()
         self.setupUi(self)
         self.setLimitsToComboBox(0, 100)
+        file = open("Setup.txt", "r")
+        FilePath = file.readline()
+        LogoSizeWidth = int(file.readline())
+        LogoSizeHeight = int(file.readline())
+        LogoPositionWidth = int(file.readline())
+        LogoPositionHeight = int(file.readline())
+        file.close()
 
-        self.SelectLogoButton.clicked.connect(self.ImportLogo)
-        self.pushButton.clicked.connect(self.ApplyChanges)
+        self.setValues(FilePath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth)
 
         self.LogoSizeWidthBox.valueChanged.connect(self.a)
         self.LogoSizeWidth.valueChanged.connect(self.b)
@@ -311,10 +317,23 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.LogoPositionHeightBox.valueChanged.connect(self.g)
         self.LogoPositionHeight.valueChanged.connect(self.h)
 
+    def setValues(self, FilePath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth):
+        self.label.setText(FilePath)
+        self.LogoSizeWidthBox.setValue(LogoSizeWidth)
+        self.LogoSizeWidth.setValue(LogoSizeWidth)
+        self.LogoSizeHeightBox.setValue(LogoSizeHeight)
+        self.LogoSizeHeight.setValue(LogoSizeHeight)
+        self.LogoPositionWidthBox.setValue(LogoPositionWidth)
+        self.LogoPositionWidth.setValue(LogoPositionWidth)
+        self.LogoPositionHeightBox.setValue(LogoPositionHeight)
+        self.LogoPositionHeight.setValue(LogoPositionHeight)
+        self.SelectLogoButton.clicked.connect(self.ImportLogo)
+        self.pushButton.clicked.connect(self.ApplyChanges)
+
     def ApplyChanges(self):
         if not len(self.label.text()) == 0:
             file = open("Setup.txt", "w")
-            file.writelines(self.label.text() + "\n")
+            file.writelines(self.label.text())
             file.writelines(str(self.LogoSizeWidthBox.value()) + "\n")
             file.writelines(str(self.LogoSizeHeightBox.value()) + "\n")
             file.writelines(str(self.LogoPositionWidthBox.value()) + "\n")
