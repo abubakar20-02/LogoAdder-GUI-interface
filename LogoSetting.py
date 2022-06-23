@@ -290,18 +290,24 @@ class Ui_Form(QObject):
         self.pushButton.setText(_translate("Form", "Apply Changes"))
 
 
+def getValuesFromFile():
+    file = open("Setup.txt", "r")
+    FilePath = file.readline().strip()
+    LogoSizeWidth = int(file.readline().strip())
+    LogoSizeHeight = int(file.readline().strip())
+    LogoPositionWidth = int(file.readline().strip())
+    LogoPositionHeight = int(file.readline().strip())
+    file.close()
+    return FilePath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth
+
+
 class MyWindow(QtWidgets.QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.setLimitsToComboBox(0, 100)
-        file = open("Setup.txt", "r")
-        FilePath = file.readline()
-        LogoSizeWidth = int(file.readline())
-        LogoSizeHeight = int(file.readline())
-        LogoPositionWidth = int(file.readline())
-        LogoPositionHeight = int(file.readline())
-        file.close()
+
+        FilePath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = getValuesFromFile()
 
         self.setValues(FilePath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth)
 
@@ -333,7 +339,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
     def ApplyChanges(self):
         if not len(self.label.text()) == 0:
             file = open("Setup.txt", "w")
-            file.writelines(self.label.text())
+            file.writelines(self.label.text() + "\n")
             file.writelines(str(self.LogoSizeWidthBox.value()) + "\n")
             file.writelines(str(self.LogoSizeHeightBox.value()) + "\n")
             file.writelines(str(self.LogoPositionWidthBox.value()) + "\n")

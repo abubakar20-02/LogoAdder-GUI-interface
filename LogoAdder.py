@@ -9,23 +9,28 @@ from PyQt5.QtWidgets import QFileDialog
 import LogoSetting
 
 
-def AddLogo(FilePath):
+def AddLogo(OriginalImage):
+    LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
     # Opening the primary image (used in background)
-    img1 = Image.open(FilePath)
+    print(LogoPath)
+    img1 = Image.open(OriginalImage)
     img1Width = img1.size[0]
     img1Height = img1.size[1]
     print(img1Width, img1Height)
     # Opening the secondary image (overlay image)
-    img2 = Image.open(r"Logo with text below.png")
+    img2 = Image.open(LogoPath.strip())
     # w h
-    img2 = img2.resize([int(0.20 * img1Width), int(0.1875 * img1Height)])
+    img2 = img2.resize((int((LogoSizeWidth / 100) * img1Width), int((LogoSizeHeight / 100) * img1Height)))
     img2Width = img2.size[0]
     img2Height = img2.size[1]
     print(img2Width, img2Height)
 
+    maxWidth = img1Width - img2Width
+    maxHeight = img1Height - img2Height
+
     # Pasting img2 image on top of img1
     # starting at coordinates (0, 0)
-    img1.paste(img2, (20, 20), mask=img2)
+    img1.paste(img2, (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)), img2)
 
     img1.save("saved.png")
 
@@ -196,7 +201,21 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window.pushButton.clicked.connect(self.update)
 
     def update(self):
-        print("hi")
+        if not len(self.FilePath.text()) == 0:
+            AddLogo(self.FilePath.text())
+            self.OriginalImage.setStyleSheet("QLabel{\n"
+                                             "    border: 1px solid;\n"
+                                             "    image: url(" + self.FilePath.text() + ");\n"
+                                                                                        "    background-color: gray;\n"
+                                                                                        "     }\n"
+                                                                                        "")
+            AddLogo(self.FilePath.text())
+            self.PreviewImage.setStyleSheet("QLabel{\n"
+                                            "    border: 1px solid;\n"
+                                            "    image: url(saved.png);\n"
+                                            "    background-color: gray;\n"
+                                            "     }\n"
+                                            "")
 
     # Open file dialog to import data
     def ImportData(self):
