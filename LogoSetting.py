@@ -237,7 +237,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
 
     def ImportLogo(self):
         filename = QFileDialog.getOpenFileName(self, 'Logo',
-                                               'Logo', "Logo(*.png)")
+                                               'Logo', "Logo(*.jpeg);;Logo(*.jpg);;Logo(*.png)")
         path = filename[0]
         print(path)
         if not len(path) == 0:

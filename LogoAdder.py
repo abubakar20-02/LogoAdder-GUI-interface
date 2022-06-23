@@ -10,6 +10,22 @@ import LogoSetting
 import SetupFile
 
 
+def has_transparency(img):
+    if img.info.get("transparency", None) is not None:
+        return True
+    if img.mode == "P":
+        transparent = img.info.get("transparency", -1)
+        for _, index in img.getcolors():
+            if index == transparent:
+                return True
+    elif img.mode == "RGBA":
+        extrema = img.getextrema()
+        if extrema[3][0] < 255:
+            return True
+
+    return False
+
+
 def AddLogo(OriginalImage):
     LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
     print(SetupFile.SavedPath)
@@ -32,7 +48,10 @@ def AddLogo(OriginalImage):
 
     # Pasting img2 image on top of img1
     # starting at coordinates (0, 0)
-    img1.paste(img2, (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)), img2)
+    if has_transparency(img2):
+        img1.paste(img2, (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)), img2)
+    else:
+        img1.paste(img2,(int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)))
 
     img1.save(SetupFile.SavedPath)
 
