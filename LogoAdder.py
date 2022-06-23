@@ -1,4 +1,5 @@
 import os
+from os.path import exists
 
 from PIL import Image
 from PyQt5 import QtCore, QtWidgets
@@ -11,10 +12,14 @@ def AddLogo(FilePath):
     img1 = Image.open(FilePath)
     img1Width = img1.size[0]
     img1Height = img1.size[1]
+    print(img1Width, img1Height)
     # Opening the secondary image (overlay image)
     img2 = Image.open(r"Logo with text below.png")
     # w h
     img2 = img2.resize([int(0.20 * img1Width), int(0.1875 * img1Height)])
+    img2Width = img2.size[0]
+    img2Height = img2.size[1]
+    print(img2Width, img2Height)
 
     # Pasting img2 image on top of img1
     # starting at coordinates (0, 0)
@@ -163,12 +168,13 @@ class Ui_MainWindow(QObject):
 
 
 def SaveNewImage():
-    PDFfile, check = QFileDialog.getSaveFileName(None, "Save Image",
-                                                 "Image", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
-    if check:
-        img1 = Image.open("saved.png")
-        img1.save(PDFfile)
-        os.startfile(PDFfile)
+    if exists("saved.png"):
+        PDFfile, check = QFileDialog.getSaveFileName(None, "Save Image",
+                                                     "Image", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
+        if check:
+            img1 = Image.open("saved.png")
+            img1.save(PDFfile)
+            os.startfile(PDFfile)
 
 
 class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -202,6 +208,9 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                             "     }\n"
                                             "")
         else:
+            if exists("saved.png"):
+                os.remove("saved.png")
+
             self.OriginalImage.setStyleSheet("QLabel{\n"
                                              "    border: 1px solid;\n"
                                              "    background-color: rgb(250, 250, 250);\n"
@@ -213,7 +222,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                             "     }\n"
                                             "")
 
-
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
             event.accept()
@@ -222,19 +230,27 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def dropEvent(self, event):
         self.FilePath.setText(event.mimeData().urls()[0].toLocalFile())
-        self.OriginalImage.setStyleSheet("QLabel{\n"
-                                         "    border: 1px solid;\n"
-                                         "    image: url(" + self.FilePath.text() + ");\n"
-                                                                                    "    background-color: gray;\n"
-                                                                                    "     }\n"
-                                                                                    "")
-        AddLogo(self.FilePath.text())
-        self.PreviewImage.setStyleSheet("QLabel{\n"
-                                        "    border: 1px solid;\n"
-                                        "    image: url(saved.jpeg);\n"
-                                        "    background-color: gray;\n"
-                                        "     }\n"
-                                        "")
+        try:
+            AddLogo(self.FilePath.text())
+            self.OriginalImage.setStyleSheet("QLabel{\n"
+                                             "    border: 1px solid;\n"
+                                             "    image: url(" + self.FilePath.text() + ");\n"
+                                                                                        "    background-color: gray;\n"
+                                                                                        "     }\n"
+                                                                                        "")
+            self.PreviewImage.setStyleSheet("QLabel{\n"
+                                            "    border: 1px solid;\n"
+                                            "    image: url(saved.jpeg);\n"
+                                            "    background-color: gray;\n"
+                                            "     }\n"
+                                            "")
+        except:
+            self.FilePath.setText("")
+            print("didnt work")
+
+    def closeEvent(self, event):
+        if exists("saved.png"):
+            os.remove("saved.png")
 
 
 if __name__ == "__main__":
