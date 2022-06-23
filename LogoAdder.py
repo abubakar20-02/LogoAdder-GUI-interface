@@ -187,13 +187,13 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # Open file dialog to import data
     def ImportData(self):
-        filename = QFileDialog.getOpenFileName(self, 'Import Image',
-                                               'Image', "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
-        path = filename[0]
-        print(path)
-        self.FilePath.setText(path)
-        if path:
+        try:
+            filename = QFileDialog.getOpenFileName(self, 'Import Image',
+                                                   'Image', "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
+            path = filename[0]
+            print(path)
             AddLogo(path)
+            self.FilePath.setText(path)
             self.OriginalImage.setStyleSheet("QLabel{\n"
                                              "    border: 1px solid;\n"
                                              "    image: url(" + path + ");\n"
@@ -207,20 +207,8 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                             "    background-color: gray;\n"
                                             "     }\n"
                                             "")
-        else:
-            if exists("saved.png"):
-                os.remove("saved.png")
-
-            self.OriginalImage.setStyleSheet("QLabel{\n"
-                                             "    border: 1px solid;\n"
-                                             "    background-color: rgb(250, 250, 250);\n"
-                                             "     }\n"
-                                             "")
-            self.PreviewImage.setStyleSheet("QLabel{\n"
-                                            "    border: 1px solid;\n"
-                                            "    background-color: rgb(250, 250, 250);\n"
-                                            "     }\n"
-                                            "")
+        except:
+            None
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
@@ -229,9 +217,10 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             event.ignore()
 
     def dropEvent(self, event):
-        self.FilePath.setText(event.mimeData().urls()[0].toLocalFile())
+        FilePath = event.mimeData().urls()[0].toLocalFile()
         try:
-            AddLogo(self.FilePath.text())
+            AddLogo(FilePath)
+            self.FilePath.setText(FilePath)
             self.OriginalImage.setStyleSheet("QLabel{\n"
                                              "    border: 1px solid;\n"
                                              "    image: url(" + self.FilePath.text() + ");\n"
@@ -240,12 +229,11 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                                                         "")
             self.PreviewImage.setStyleSheet("QLabel{\n"
                                             "    border: 1px solid;\n"
-                                            "    image: url(saved.jpeg);\n"
+                                            "    image: url(saved.png);\n"
                                             "    background-color: gray;\n"
                                             "     }\n"
                                             "")
         except:
-            self.FilePath.setText("")
             print("didnt work")
 
     def closeEvent(self, event):
