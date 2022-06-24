@@ -160,6 +160,7 @@ class Ui_MainWindow(QObject):
         self.actionSettings.setText(_translate("MainWindow", "Settings"))
 
 
+# save the new combined image.
 def SaveNewImage():
     if exists(SetupFile.SavedPath):
         savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
@@ -176,7 +177,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setAcceptDrops(True)
         self.setWindowIcon(QIcon(SetupFile.MainIcon))
-        self.ImportImageButton.clicked.connect(self.ImportData)
+        self.ImportImageButton.clicked.connect(self.ImportImage)
         self.ConvertButton.clicked.connect(SaveNewImage)
         self.actionSettings.triggered.connect(self.openLogoSetting)
 
@@ -187,6 +188,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window.show()
         self.window.pushButton.clicked.connect(self.update)
 
+    # update the main screen with original image and preview of the combined image.
     def update(self):
         if not len(self.FilePath.text()) == 0:
             AddLogo(self.FilePath.text())
@@ -199,13 +201,12 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             AddLogo(self.FilePath.text())
             self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
 
-    # Open file dialog to import data
-    def ImportData(self):
+    # Open file dialog to import image
+    def ImportImage(self):
         try:
             filename = QFileDialog.getOpenFileName(self, 'Import Image',
                                                    'Image', "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
             path = filename[0]
-            print(path)
             self.FilePath.setText(path)
             self.update()
         except:
@@ -225,6 +226,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except:
             None
 
+    # when user closes the main window, remove temp files and close all other sub windows.
     def closeEvent(self, event):
         if exists(SetupFile.SavedPath):
             os.remove(SetupFile.SavedPath)
