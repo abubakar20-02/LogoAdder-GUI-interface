@@ -75,96 +75,114 @@ class Ui_Form(QObject):
         self.horizontalLayout_3.addWidget(self.LogoSizeWidthBox)
 
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-
         self.horizontalLayout_3.addItem(spacerItem2)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
+
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+
         self.LogoSizeHeightText = QtWidgets.QLabel(Form)
         self.LogoSizeHeightText.setMaximumSize(QtCore.QSize(30, 30))
         self.LogoSizeHeightText.setObjectName("LogoSizeHeightText")
         self.horizontalLayout_4.addWidget(self.LogoSizeHeightText)
+
         self.LogoSizeHeight = QtWidgets.QSlider(Form)
         self.LogoSizeHeight.setMinimumSize(QtCore.QSize(100, 0))
         self.LogoSizeHeight.setMaximumSize(QtCore.QSize(200, 16777215))
         self.LogoSizeHeight.setStyleSheet(SetupFile.Slider)
-        self.LogoSizeHeight.setMaximum(100)
         self.LogoSizeHeight.setOrientation(QtCore.Qt.Horizontal)
         self.LogoSizeHeight.setObjectName("LogoSizeHeight")
         self.horizontalLayout_4.addWidget(self.LogoSizeHeight)
+
         self.LogoSizeHeightBox = QtWidgets.QSpinBox(Form)
         self.LogoSizeHeightBox.setStyleSheet(SetupFile.SpinBox)
         self.LogoSizeHeightBox.setObjectName("LogoSizeHeightBox")
         self.horizontalLayout_4.addWidget(self.LogoSizeHeightBox)
+
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem3)
+
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
         self.horizontalLayout_5.addLayout(self.verticalLayout_2)
 
-        self.preveiwimage = QLabel(Form)
-        self.preveiwimage.setObjectName(u"preveiwimage")
-        self.preveiwimage.setMinimumSize(QSize(200, 200))
-        self.preveiwimage.setStyleSheet(SetupFile.EmptyImage)
+        self.PreviewImage = QLabel(Form)
+        self.PreviewImage.setObjectName(u"PreviewImage")
+        self.PreviewImage.setMinimumSize(QSize(200, 200))
+        self.PreviewImage.setStyleSheet(SetupFile.EmptyImage)
 
-        self.horizontalLayout_5.addWidget(self.preveiwimage)
+        self.horizontalLayout_5.addWidget(self.PreviewImage)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
+
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+
         self.LogoPositionText = QtWidgets.QLabel(Form)
         self.LogoPositionText.setObjectName("LogoPositionText")
         self.horizontalLayout_6.addWidget(self.LogoPositionText)
+
         spacerItem4 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.horizontalLayout_6.addItem(spacerItem4)
+
         self.verticalLayout_3 = QtWidgets.QVBoxLayout()
         self.verticalLayout_3.setObjectName("verticalLayout_3")
+
         self.horizontalLayout_7 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
+
         self.LogoPositionWidthText = QtWidgets.QLabel(Form)
         self.LogoPositionWidthText.setMaximumSize(QtCore.QSize(30, 30))
         self.LogoPositionWidthText.setObjectName("LogoPositionWidthText")
         self.horizontalLayout_7.addWidget(self.LogoPositionWidthText)
+
         self.LogoPositionWidth = QtWidgets.QSlider(Form)
         self.LogoPositionWidth.setMinimumSize(QtCore.QSize(100, 0))
         self.LogoPositionWidth.setMaximumSize(QtCore.QSize(200, 16777215))
         self.LogoPositionWidth.setStyleSheet(SetupFile.Slider)
-        self.LogoPositionWidth.setMaximum(100)
         self.LogoPositionWidth.setOrientation(QtCore.Qt.Horizontal)
         self.LogoPositionWidth.setObjectName("LogoPositionWidth")
         self.horizontalLayout_7.addWidget(self.LogoPositionWidth)
+
         self.LogoPositionWidthBox = QtWidgets.QSpinBox(Form)
         self.LogoPositionWidthBox.setStyleSheet(SetupFile.SpinBox)
         self.LogoPositionWidthBox.setObjectName("LogoPositionWidthBox")
         self.horizontalLayout_7.addWidget(self.LogoPositionWidthBox)
+
         spacerItem5 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_7.addItem(spacerItem5)
         self.verticalLayout_3.addLayout(self.horizontalLayout_7)
+
         self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
+
         self.LogoPositionHeightText = QtWidgets.QLabel(Form)
         self.LogoPositionHeightText.setMaximumSize(QtCore.QSize(30, 30))
         self.LogoPositionHeightText.setObjectName("LogoPositionHeightText")
         self.horizontalLayout_8.addWidget(self.LogoPositionHeightText)
+
         self.LogoPositionHeight = QtWidgets.QSlider(Form)
         self.LogoPositionHeight.setMinimumSize(QtCore.QSize(100, 0))
         self.LogoPositionHeight.setMaximumSize(QtCore.QSize(200, 16777215))
         self.LogoPositionHeight.setStyleSheet(SetupFile.Slider)
-        self.LogoPositionHeight.setMaximum(100)
         self.LogoPositionHeight.setOrientation(QtCore.Qt.Horizontal)
         self.LogoPositionHeight.setObjectName("LogoPositionHeight")
         self.horizontalLayout_8.addWidget(self.LogoPositionHeight)
+
         self.LogoPositionHeightBox = QtWidgets.QSpinBox(Form)
         self.LogoPositionHeightBox.setStyleSheet(SetupFile.SpinBox)
         self.LogoPositionHeightBox.setObjectName("LogoPositionHeightBox")
         self.horizontalLayout_8.addWidget(self.LogoPositionHeightBox)
+
         spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_8.addItem(spacerItem6)
         self.verticalLayout_3.addLayout(self.horizontalLayout_8)
         self.horizontalLayout_6.addLayout(self.verticalLayout_3)
+
         self.blank = QtWidgets.QLabel(Form)
-        self.blank.setObjectName(u"blank")
+        self.blank.setObjectName("blank")
         self.blank.setMinimumSize(QSize(200, 200))
         self.horizontalLayout_6.addWidget(self.blank)
         self.verticalLayout.addLayout(self.horizontalLayout_6)
+
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -174,11 +192,14 @@ class Ui_Form(QObject):
         self.CloseButton.setObjectName("CloseButton")
         self.CloseButton.setStyleSheet(SetupFile.Button)
         self.horizontalLayout_2.addWidget(self.CloseButton)
+
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setStyleSheet(SetupFile.Button)
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout_2.addWidget(self.pushButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
+
+        self.setValuesFromFile()
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -197,6 +218,7 @@ class Ui_Form(QObject):
         self.pushButton.setText(_translate("Form", "Apply Changes"))
 
 
+# get values from file
 def getValuesFromFile():
     file = open(SetupFile.SetUpFilePath, "r")
     FilePath = file.readline().strip()
@@ -214,8 +236,6 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.setupUi(self)
         self.setWindowIcon(QIcon(SetupFile.MainIcon))
         self.setLimitsToComboBox(0, 100)
-
-        self.setValuesFromFile()
 
         self.LogoSizeWidthBox.valueChanged.connect(self.AdjustLogoSizeWidthSlider)
         self.LogoSizeWidth.valueChanged.connect(self.AdjustLogoSizeWidthBox)
@@ -246,9 +266,9 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.LogoPositionWidth.setValue(LogoPositionWidth)
         self.LogoPositionHeightBox.setValue(LogoPositionHeight)
         self.LogoPositionHeight.setValue(LogoPositionHeight)
-        self.preveiwimage.setStyleSheet(
-            "QLabel{border: 1px solid;image: url(" + self.FilePath.text() + ");background-color: "
-                                                                            "white;}")
+        self.PreviewImage.setStyleSheet(
+            "QLabel{border: 1px solid;image: url(" + FilePath + ");background-color: "
+                                                                "white;}")
 
     # save input from ui to file
     # when called by the main file it also updates the screen.
@@ -262,40 +282,51 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
             file.writelines(str(self.LogoPositionHeightBox.value()))
             file.close()
 
+    # import logo and add it to logo previewer
     def ImportLogo(self):
         filename = QFileDialog.getOpenFileName(self, 'Logo',
                                                'Logo', "Logo(*.jpeg);;Logo(*.jpg);;Logo(*.png)")
         path = filename[0]
         if not len(path) == 0:
             self.FilePath.setText(path)
-            self.preveiwimage.setStyleSheet(
+            print(self.FilePath.text())
+            self.PreviewImage.setStyleSheet(
                 "QLabel{border: 1px solid;image: url(" + self.FilePath.text() + ");background-color: "
                                                                                 "white;}")
 
+    # adjust slider according to box
     def AdjustLogoSizeWidthSlider(self):
         self.LogoSizeWidth.setValue(self.LogoSizeWidthBox.value())
 
+    # adjust box according to slider
     def AdjustLogoSizeWidthBox(self):
         self.LogoSizeWidthBox.setValue(self.LogoSizeWidth.value())
 
+    # adjust slider according to box
     def AdjustLogoSizeHeightSlider(self):
         self.LogoSizeHeight.setValue(self.LogoSizeHeightBox.value())
 
+    # adjust box according to slider
     def AdjustLogoSizeHeightBox(self):
         self.LogoSizeHeightBox.setValue(self.LogoSizeHeight.value())
 
+    # adjust slider according to box
     def AdjustLogoPositionWidthSlider(self):
         self.LogoPositionWidth.setValue(self.LogoPositionWidthBox.value())
 
+    # adjust box according to slider
     def AdjustLogoPositionWidthBox(self):
         self.LogoPositionWidthBox.setValue(self.LogoPositionWidth.value())
 
+    # adjust slider according to box
     def AdjustLogoPositionHeightSlider(self):
         self.LogoPositionHeight.setValue(self.LogoPositionHeightBox.value())
 
+    # adjust box according to slider
     def AdjustLogoPositionHeightBox(self):
         self.LogoPositionHeightBox.setValue(self.LogoPositionHeight.value())
 
+    # set max and min limits to spinbox and slider
     def setLimitsToComboBox(self, Minimum, Maximum):
         self.LogoSizeWidthBox.setMinimum(Minimum)
         self.LogoSizeWidthBox.setMaximum(Maximum)
@@ -320,12 +351,3 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
 
         self.LogoPositionHeight.setMinimum(Minimum)
         self.LogoPositionHeight.setMaximum(Maximum)
-
-
-if __name__ == "__main__":
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = MyWindow()
-    MainWindow.show()
-    sys.exit(app.exec_())
