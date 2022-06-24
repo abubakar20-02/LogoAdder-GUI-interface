@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QObject
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtCore import QObject, QSize
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QFileDialog, QLabel
 
 import SetupFile
 
@@ -99,6 +100,13 @@ class Ui_Form(QObject):
         self.horizontalLayout_4.addItem(spacerItem3)
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
         self.horizontalLayout_5.addLayout(self.verticalLayout_2)
+
+        self.preveiwimage = QLabel(Form)
+        self.preveiwimage.setObjectName(u"preveiwimage")
+        self.preveiwimage.setMinimumSize(QSize(200, 200))
+        self.preveiwimage.setStyleSheet(SetupFile.EmptyImage)
+
+        self.horizontalLayout_5.addWidget(self.preveiwimage)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
         self.horizontalLayout_6 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
@@ -152,11 +160,20 @@ class Ui_Form(QObject):
         self.horizontalLayout_8.addItem(spacerItem6)
         self.verticalLayout_3.addLayout(self.horizontalLayout_8)
         self.horizontalLayout_6.addLayout(self.verticalLayout_3)
+        self.blank = QtWidgets.QLabel(Form)
+        self.blank.setObjectName(u"blank")
+        self.blank.setMinimumSize(QSize(200, 200))
+        self.horizontalLayout_6.addWidget(self.blank)
         self.verticalLayout.addLayout(self.horizontalLayout_6)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem7)
+
+        self.CloseButton = QtWidgets.QPushButton(Form)
+        self.CloseButton.setObjectName("CloseButton")
+        self.CloseButton.setStyleSheet(SetupFile.Button)
+        self.horizontalLayout_2.addWidget(self.CloseButton)
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setStyleSheet(SetupFile.Button)
         self.pushButton.setObjectName("pushButton")
@@ -168,7 +185,7 @@ class Ui_Form(QObject):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "Settings"))
         self.SelectLogoButton.setText(_translate("Form", "Select Logo"))
         self.label_5.setText(_translate("Form", "Logo Size:      "))
         self.label_3.setText(_translate("Form", "w%"))
@@ -176,6 +193,7 @@ class Ui_Form(QObject):
         self.label_6.setText(_translate("Form", "Logo Position:"))
         self.label_7.setText(_translate("Form", "w%"))
         self.label_8.setText(_translate("Form", "h%"))
+        self.CloseButton.setText(_translate("Form", "Close"))
         self.pushButton.setText(_translate("Form", "Apply Changes"))
 
 
@@ -194,6 +212,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setWindowIcon(QIcon(SetupFile.MainIcon))
         self.setLimitsToComboBox(0, 100)
 
         FilePath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = getValuesFromFile()
@@ -212,6 +231,10 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.LogoPositionHeightBox.valueChanged.connect(self.g)
         self.LogoPositionHeight.valueChanged.connect(self.h)
 
+        self.SelectLogoButton.clicked.connect(self.ImportLogo)
+        self.pushButton.clicked.connect(self.ApplyChanges)
+        self.CloseButton.clicked.connect(self.close)
+
     def setValues(self, FilePath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth):
         self.label.setText(FilePath)
         self.LogoSizeWidthBox.setValue(LogoSizeWidth)
@@ -222,8 +245,9 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.LogoPositionWidth.setValue(LogoPositionWidth)
         self.LogoPositionHeightBox.setValue(LogoPositionHeight)
         self.LogoPositionHeight.setValue(LogoPositionHeight)
-        self.SelectLogoButton.clicked.connect(self.ImportLogo)
-        self.pushButton.clicked.connect(self.ApplyChanges)
+        self.preveiwimage.setStyleSheet(
+            "QLabel{border: 1px solid;image: url(" + self.label.text() + ");background-color: "
+                                                                         "white;}")
 
     def ApplyChanges(self):
         if not len(self.label.text()) == 0:
@@ -242,6 +266,9 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         print(path)
         if not len(path) == 0:
             self.label.setText(path)
+            self.preveiwimage.setStyleSheet(
+                "QLabel{border: 1px solid;image: url(" + self.label.text() + ");background-color: "
+                                                                             "white;}")
 
     def a(self):
         self.LogoSizeWidth.setValue(self.LogoSizeWidthBox.value())

@@ -4,12 +4,14 @@ from os.path import exists
 from PIL import Image
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QFileDialog, QApplication
 
 import LogoSetting
 import SetupFile
 
 
+# checks if logo is transparent or not.
 def has_transparency(img):
     if img.info.get("transparency", None) is not None:
         return True
@@ -26,34 +28,33 @@ def has_transparency(img):
     return False
 
 
+# add logo to the image.
 def AddLogo(OriginalImage):
     LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
-    print(SetupFile.SavedPath)
-    # Opening the primary image (used in background)
-    print(LogoPath)
-    img1 = Image.open(OriginalImage)
-    img1Width = img1.size[0]
-    img1Height = img1.size[1]
-    print(img1Width, img1Height)
-    # Opening the secondary image (overlay image)
-    img2 = Image.open(LogoPath.strip())
-    # w h
-    img2 = img2.resize((int((LogoSizeWidth / 100) * img1Width), int((LogoSizeHeight / 100) * img1Height)))
-    img2Width = img2.size[0]
-    img2Height = img2.size[1]
-    print(img2Width, img2Height)
 
-    maxWidth = img1Width - img2Width
-    maxHeight = img1Height - img2Height
+    Background = Image.open(OriginalImage)
+    BackgroundWidth = Background.size[0]
+    BackgroundHeight = Background.size[1]
 
-    # Pasting img2 image on top of img1
-    # starting at coordinates (0, 0)
-    if has_transparency(img2):
-        img1.paste(img2, (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)), img2)
+    Logo = Image.open(LogoPath.strip())
+
+    # resize on the scale of the background
+    Logo = Logo.resize((int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
+    LogoWidth = Logo.size[0]
+    LogoHeight = Logo.size[1]
+
+    maxWidth = BackgroundWidth - LogoWidth
+    maxHeight = BackgroundHeight - LogoHeight
+
+    # set position of logo on the scale of the background
+    if has_transparency(Logo):
+        Background.paste(Logo, (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)),
+                         Logo)
     else:
-        img1.paste(img2,(int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)))
+        Background.paste(Logo, (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)))
 
-    img1.save(SetupFile.SavedPath)
+    # Save the image in the desired path.
+    Background.save(SetupFile.SavedPath)
 
 
 class Ui_MainWindow(QObject):
@@ -70,8 +71,8 @@ class Ui_MainWindow(QObject):
 
         self.MainGrid = QtWidgets.QGridLayout()
         self.MainGrid.setObjectName("MainGrid")
-        self.Images = QtWidgets.QHBoxLayout()
 
+        self.Images = QtWidgets.QHBoxLayout()
         self.Images.setContentsMargins(10, 10, 10, 10)
         self.Images.setSpacing(50)
         self.Images.setObjectName("Images")
@@ -82,7 +83,6 @@ class Ui_MainWindow(QObject):
         self.OriginalImage.setStyleSheet(SetupFile.EmptyImage)
         self.OriginalImage.setText("")
         self.OriginalImage.setObjectName("OriginalImage")
-
         self.Images.addWidget(self.OriginalImage)
 
         self.PreviewImage = QtWidgets.QLabel(self.centralwidget)
@@ -98,30 +98,38 @@ class Ui_MainWindow(QObject):
         self.InputLayout.setContentsMargins(10, 20, -1, -1)
         self.InputLayout.setSpacing(10)
         self.InputLayout.setObjectName("InputLayout")
+
         self.ImportImageButton = QtWidgets.QPushButton(self.centralwidget)
         self.ImportImageButton.setStyleSheet(SetupFile.Button)
         self.ImportImageButton.setObjectName("ImportImageButton")
         self.InputLayout.addWidget(self.ImportImageButton)
+
         self.FilePath = QtWidgets.QLabel(self.centralwidget)
         self.FilePath.setMinimumSize(QtCore.QSize(400, 0))
         self.FilePath.setMaximumSize(QtCore.QSize(16777215, 30))
         self.FilePath.setStyleSheet(SetupFile.FilePath)
         self.FilePath.setObjectName("FilePath")
         self.InputLayout.addWidget(self.FilePath)
+
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.InputLayout.addItem(spacerItem)
         self.MainGrid.addLayout(self.InputLayout, 0, 0, 1, 1)
+
         self.ConvertGrid = QtWidgets.QHBoxLayout()
         self.ConvertGrid.setContentsMargins(-1, -1, 10, -1)
         self.ConvertGrid.setObjectName("ConvertGrid")
+
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.ConvertGrid.addItem(spacerItem1)
+
         self.ConvertButton = QtWidgets.QPushButton(self.centralwidget)
         self.ConvertButton.setStyleSheet(SetupFile.Button)
         self.ConvertButton.setObjectName("ConvertButton")
         self.ConvertGrid.addWidget(self.ConvertButton)
         self.MainGrid.addLayout(self.ConvertGrid, 2, 0, 1, 1)
+
         self.verticalLayout_3.addLayout(self.MainGrid)
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -145,7 +153,7 @@ class Ui_MainWindow(QObject):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Logo-Adder"))
         self.ImportImageButton.setText(_translate("MainWindow", "Import Image"))
         self.ConvertButton.setText(_translate("MainWindow", "Convert"))
         self.menuFile.setTitle(_translate("MainWindow", "User"))
@@ -167,6 +175,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.setAcceptDrops(True)
+        self.setWindowIcon(QIcon(SetupFile.MainIcon))
         self.ImportImageButton.clicked.connect(self.ImportData)
         self.ConvertButton.clicked.connect(SaveNewImage)
         self.actionSettings.triggered.connect(self.openLogoSetting)
@@ -214,11 +223,13 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.FilePath.setText(FilePath)
             self.update()
         except:
-            print("didnt work")
+            None
 
     def closeEvent(self, event):
-        if exists("saved.SetupFile.SavedPath"):
-            os.remove("SetupFile.SavedPath.png")
+        if exists(SetupFile.SavedPath):
+            os.remove(SetupFile.SavedPath)
+        for window in QApplication.topLevelWidgets():
+            window.close()
 
 
 if __name__ == "__main__":

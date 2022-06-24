@@ -63,3 +63,6 @@ SpinBox = ("QSpinBox{\n"
 
 
 SetUpFilePath = "Program Files/Setup.txt"
+
+MainIcon = "Resources/Logo.png"
+
