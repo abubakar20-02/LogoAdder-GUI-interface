@@ -162,12 +162,12 @@ class Ui_MainWindow(QObject):
 
 def SaveNewImage():
     if exists(SetupFile.SavedPath):
-        PDFfile, check = QFileDialog.getSaveFileName(None, "Save Image",
-                                                     "Image", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
+        savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
+                                                       "Output", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
         if check:
             img1 = Image.open(SetupFile.SavedPath)
-            img1.save(PDFfile)
-            os.startfile(PDFfile)
+            img1.save(savedFile)
+            os.startfile(savedFile)
 
 
 class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
