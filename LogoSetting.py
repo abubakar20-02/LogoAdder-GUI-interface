@@ -296,7 +296,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
     # import logo and add it to logo previewer
     def ImportLogo(self):
         filename = QFileDialog.getOpenFileName(self, 'Logo',
-                                               'Logo', "Logo(*.jpeg);;Logo(*.jpg);;Logo(*.png)")
+                                               'Logo', "Logo(*.png);;Logo(*.jpeg);;Logo(*.jpg)")
         path = filename[0]
         if not len(path) == 0:
             self.FilePath.setText(path)

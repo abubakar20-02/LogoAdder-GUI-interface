@@ -11,6 +11,12 @@ import LogoSetting
 import SetupFile
 
 
+# checks if required folder is present, if it isn't present, it makes the folder.
+def FolderPresentEnsured(Folder):
+    if not exists(Folder):
+        os.mkdir(Folder)
+
+
 # checks if logo is transparent or not.
 def has_transparency(img):
     if img.info.get("transparency", None) is not None:
@@ -59,6 +65,12 @@ def AddLogo(OriginalImage):
 
 class Ui_MainWindow(QObject):
     def setupUi(self, MainWindow):
+        # Folder check
+        FolderPresentEnsured(SetupFile.ProgramFilesFolder)
+        FolderPresentEnsured(SetupFile.ResourceFolder)
+        FolderPresentEnsured(SetupFile.OutputFolder)
+        FolderPresentEnsured(SetupFile.LogoFolder)
+
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(690, 542)
         MainWindow.setStyleSheet(SetupFile.MainBackground)

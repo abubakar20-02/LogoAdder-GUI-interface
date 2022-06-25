@@ -1,3 +1,9 @@
+#Folder
+ProgramFilesFolder = "Program Files"
+ResourceFolder = "Resources"
+OutputFolder = "Output"
+LogoFolder = "Logo"
+
 MainBackground = "background-color: rgb(255, 241, 171)"
 
 EmptyImage = ("QLabel{\n"
@@ -33,9 +39,9 @@ FilePath = ("QLabel{\n"
 MenuBar = "QMenuBar{background-color: white}""QMenu{background-color: white}""QMenu::item:selected { ""background" \
           "-color: #1261A0;color: rgb(255,255,""255);} "
 
-SavedPath = "Resources/saved.png"
+SavedPath = ResourceFolder + "/saved.png"
 
-PreviewImage = ("QLabel{border: 1px solid;image: url("+SavedPath+");background-color: gray;}")
+PreviewImage = ("QLabel{border: 1px solid;image: url(" + SavedPath + ");background-color: gray;}")
 
 Slider = ("QSlider::groove:horizontal {\n"
           "    border: 1px solid black;\n"
@@ -61,8 +67,6 @@ SpinBox = ("QSpinBox{\n"
            "    background-color: white;\n"
            "    }")
 
+SetUpFilePath = ProgramFilesFolder + "/Setup.txt"
 
-SetUpFilePath = "Program Files/Setup.txt"
-
-MainIcon = "Resources/Logo.png"
-
+MainIcon = ResourceFolder + "/Logo.png"
