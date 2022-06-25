@@ -1,3 +1,5 @@
+from os.path import exists
+
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject, QSize
 from PyQt5.QtGui import QIcon
@@ -220,6 +222,15 @@ class Ui_Form(QObject):
 
 # get values from file
 def getValuesFromFile():
+    # if the file doesnt exist, we make a file
+    if not exists(SetupFile.SetUpFilePath):
+        file = open(SetupFile.SetUpFilePath, "w")
+        file.writelines("\n")
+        file.writelines("1" + "\n")
+        file.writelines("1" + "\n")
+        file.writelines("1" + "\n")
+        file.writelines("1")
+        file.close()
     file = open(SetupFile.SetUpFilePath, "r")
     FilePath = file.readline().strip()
     LogoSizeWidth = int(file.readline().strip())
