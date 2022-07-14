@@ -4,7 +4,6 @@ Simple application to add logo.
 
 ## Table of Contents 📘
 * [Libraries](#libraries)
-* [Installation](#install)
 
 # <a name="libraries"></a>
 ## Libraries 💻
