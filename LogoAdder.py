@@ -3,7 +3,7 @@ from os.path import exists
 
 from PIL import Image
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QObject
+from PyQt5.QtCore import QObject, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QApplication
 
@@ -225,6 +225,8 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
             if not len(self.FilePath.text()) == 0:
                 AddLogo(self.FilePath.text())
+                self.OriginalImage.setText("")
+                self.PreviewImage.setText("")
                 self.OriginalImage.setStyleSheet("QLabel{\n"
                                                  "    border: 1px solid;\n"
                                                  "    image: url(" + self.FilePath.text() + ");\n"
@@ -236,6 +238,21 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if extension == "":
             print("Folder detected")
 
+            self.OriginalImage.setText("Loaded from folder")
+            self.OriginalImage.setAlignment(Qt.AlignCenter)
+            self.OriginalImage.setStyleSheet("QLabel{\n"
+                                             "    border: 1px solid;\n"
+                                             "background-color: white;\n "
+                                             "     }\n"
+                                             "")
+
+            self.PreviewImage.setText("No preview for folder")
+            self.PreviewImage.setAlignment(Qt.AlignCenter)
+            self.PreviewImage.setStyleSheet("QLabel{\n"
+                                            "    border: 1px solid;\n"
+                                            "background-color: white;\n "
+                                            "     }\n"
+                                            "")
             dir_path = self.FilePath.text()
             res = []
             NumberOfPhotos = 0
