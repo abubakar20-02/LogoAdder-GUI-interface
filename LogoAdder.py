@@ -9,6 +9,9 @@ from PyQt5.QtWidgets import QFileDialog, QApplication
 
 import LogoSetting
 import SetupFile
+from os import walk
+
+PhotoFiles = []
 
 
 # checks if required folder is present, if it isn't present, it makes the folder.
@@ -172,7 +175,7 @@ class Ui_MainWindow(QObject):
         self.actionSettings.setText(_translate("MainWindow", "Settings"))
 
 
-# save the new combined image.
+# save the new combined single image.
 def SaveNewImage():
     if exists(SetupFile.SavedPath):
         savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
@@ -190,8 +193,24 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setAcceptDrops(True)
         self.setWindowIcon(QIcon(SetupFile.MainIcon))
         self.ImportImageButton.clicked.connect(self.ImportImage)
-        self.ConvertButton.clicked.connect(SaveNewImage)
+        self.ConvertButton.clicked.connect(self.Save)
         self.actionSettings.triggered.connect(self.openLogoSetting)
+
+    # save multiple combined photos in a folder.
+    def SaveMultipleImages(self):
+        directory = str(QFileDialog.getExistingDirectory(None, "Select folder", 'Folder'))
+        for files in PhotoFiles:
+            AddLogo(self.FilePath.text() + "/" + files)
+            img1 = Image.open(SetupFile.SavedPath)
+            img1.save(directory + "/" + files)
+
+    # check if it is to save a single image or multiple images.
+    def Save(self):
+        name, extension = os.path.splitext(self.FilePath.text())
+        if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+            SaveNewImage()
+        else:
+            self.SaveMultipleImages()
 
     # Open the test model window
     def openLogoSetting(self):
@@ -202,16 +221,37 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # update the main screen with original image and preview of the combined image.
     def update(self):
-        if not len(self.FilePath.text()) == 0:
-            AddLogo(self.FilePath.text())
-            self.OriginalImage.setStyleSheet("QLabel{\n"
-                                             "    border: 1px solid;\n"
-                                             "    image: url(" + self.FilePath.text() + ");\n"
-                                                                                        "    background-color: gray;\n"
-                                                                                        "     }\n"
-                                                                                        "")
-            AddLogo(self.FilePath.text())
-            self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
+        name, extension = os.path.splitext(self.FilePath.text())
+        if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+            if not len(self.FilePath.text()) == 0:
+                AddLogo(self.FilePath.text())
+                self.OriginalImage.setStyleSheet("QLabel{\n"
+                                                 "    border: 1px solid;\n"
+                                                 "    image: url(" + self.FilePath.text() + ");\n"
+                                                                                            "background-color: gray;\n "
+                                                                                            "     }\n"
+                                                                                            "")
+                AddLogo(self.FilePath.text())
+                self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
+        if extension == "":
+            print("Folder detected")
+
+            dir_path = self.FilePath.text()
+            res = []
+            NumberOfPhotos = 0
+            global PhotoFiles
+            PhotoFiles = []
+            for (dir_path, dir_names, file_names) in walk(dir_path):
+                for file in file_names:
+                    name, extension = os.path.splitext(file)
+                    if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                        PhotoFiles.append(file)
+                        NumberOfPhotos = NumberOfPhotos + 1
+                res.extend(file_names)
+            print(PhotoFiles)
+            print(NumberOfPhotos)
+
+            # send to add logo to all images
 
     # Open file dialog to import image
     def ImportImage(self):
@@ -231,10 +271,12 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             event.ignore()
 
     def dropEvent(self, event):
-        FilePath = event.mimeData().urls()[0].toLocalFile()
+        FilePath = [u.toLocalFile() for u in event.mimeData().urls()]
         try:
-            self.FilePath.setText(FilePath)
-            self.update()
+            for f in FilePath:
+                self.FilePath.setText(f)
+                print(f)
+                self.update()
         except:
             None
 
