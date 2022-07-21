@@ -41,41 +41,6 @@ def has_transparency(img):
     return False
 
 
-# add logo to the image.
-def AddLogo(OriginalImage):
-    try:
-        LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
-
-        Background = Image.open(OriginalImage)
-        BackgroundWidth = Background.size[0]
-        BackgroundHeight = Background.size[1]
-
-        Logo = Image.open(LogoPath.strip())
-
-        # resize on the scale of the background
-        Logo = Logo.resize(
-            (int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
-        LogoWidth = Logo.size[0]
-        LogoHeight = Logo.size[1]
-
-        maxWidth = BackgroundWidth - LogoWidth
-        maxHeight = BackgroundHeight - LogoHeight
-
-        # set position of logo on the scale of the background
-        if has_transparency(Logo):
-            Background.paste(Logo,
-                             (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)),
-                             Logo)
-        else:
-            Background.paste(Logo,
-                             (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)))
-
-        # Save the image in the desired path.
-        Background.save(SetupFile.SavedPath)
-    except:
-        print("can't add logo")
-
-
 class Ui_MainWindow(QObject):
     def setupUi(self, MainWindow):
         # Folder check
@@ -206,23 +171,68 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ConvertButton.clicked.connect(self.Save)
         self.actionSettings.triggered.connect(self.openLogoSetting)
 
+    # add logo to the image.
+    def AddLogo(self,OriginalImage):
+        try:
+            LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
+
+            Background = Image.open(OriginalImage)
+            BackgroundWidth = Background.size[0]
+            BackgroundHeight = Background.size[1]
+
+            if len(LogoPath.strip()) == 0:
+                print("not found")
+                self.openPopUpWindow("No logo found!")
+            else:
+                Logo = Image.open(LogoPath.strip())
+                # resize on the scale of the background
+                Logo = Logo.resize(
+                    (int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
+                LogoWidth = Logo.size[0]
+                LogoHeight = Logo.size[1]
+
+                maxWidth = BackgroundWidth - LogoWidth
+                maxHeight = BackgroundHeight - LogoHeight
+
+                # set position of logo on the scale of the background
+                if has_transparency(Logo):
+                    Background.paste(Logo,
+                                     (int((LogoPositionWidth / 100) * maxWidth),
+                                      int((LogoPositionHeight / 100) * maxHeight)),
+                                     Logo)
+                else:
+                    Background.paste(Logo,
+                                     (int((LogoPositionWidth / 100) * maxWidth),
+                                      int((LogoPositionHeight / 100) * maxHeight)))
+
+                # Save the image in the desired path.
+                Background.save(SetupFile.SavedPath)
+        except:
+            print("can't add logo")
+
     # save multiple combined photos in a folder.
     def SaveMultipleImages(self):
-        global trial
-        directory = str(QFileDialog.getExistingDirectory(None, "Select folder", 'Folder'))
-        if not len(directory) == 0:
-            dir_path = self.FilePath.text()
-            global PhotoFiles
-            PhotoFiles = []
-            for (dir_path, dir_names, file_names) in walk(dir_path):
-                for file in file_names:
-                    name, extension = os.path.splitext(file)
-                    if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-                        trial.append(os.path.join(dir_path, file))
-                        AddLogo(os.path.join(dir_path, file))
-                        img1 = Image.open(SetupFile.SavedPath)
-                        img1.save(directory + "/" + file)
-            print(trial)
+        LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
+        print(len(LogoPath.strip()))
+        if not len(LogoPath.strip()) == 0:
+            global trial
+            directory = str(QFileDialog.getExistingDirectory(None, "Select folder", 'Folder'))
+            if not len(directory) == 0:
+                dir_path = self.FilePath.text()
+                global PhotoFiles
+                PhotoFiles = []
+                for (dir_path, dir_names, file_names) in walk(dir_path):
+                    for file in file_names:
+                        name, extension = os.path.splitext(file)
+                        if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                            trial.append(os.path.join(dir_path, file))
+                            self.AddLogo(os.path.join(dir_path, file))
+                            img1 = Image.open(SetupFile.SavedPath)
+                            img1.save(directory + "/" + file)
+                print(trial)
+        else:
+            print("yo")
+            self.openPopUpWindow("Logo not found!")
 
     # check if it is to save a single image or multiple images.
     def Save(self):
@@ -256,7 +266,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         name, extension = os.path.splitext(self.FilePath.text())
         if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
             if not len(self.FilePath.text()) == 0:
-                AddLogo(self.FilePath.text())
                 self.OriginalImage.setText("")
                 self.PreviewImage.setText("")
                 self.OriginalImage.setStyleSheet("QLabel{\n"
@@ -265,7 +274,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                                                             "background-color: gray;\n "
                                                                                             "     }\n"
                                                                                             "")
-                AddLogo(self.FilePath.text())
+                self.AddLogo(self.FilePath.text())
                 self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
         if extension == "":
             print("Folder detected")
