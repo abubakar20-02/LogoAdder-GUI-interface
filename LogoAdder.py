@@ -12,6 +12,7 @@ import SetupFile
 from os import walk
 
 PhotoFiles = []
+trial = []
 
 
 # checks if required folder is present, if it isn't present, it makes the folder.
@@ -204,7 +205,8 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # save multiple combined photos in a folder.
     def SaveMultipleImages(self):
-        directory= str(QFileDialog.getExistingDirectory(None, "Select folder", 'Folder'))
+        global trial
+        directory = str(QFileDialog.getExistingDirectory(None, "Select folder", 'Folder'))
         if not len(directory) == 0:
             dir_path = self.FilePath.text()
             global PhotoFiles
@@ -213,9 +215,11 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 for file in file_names:
                     name, extension = os.path.splitext(file)
                     if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                        trial.append(os.path.join(dir_path, file))
                         AddLogo(os.path.join(dir_path, file))
                         img1 = Image.open(SetupFile.SavedPath)
                         img1.save(directory + "/" + file)
+            print(trial)
 
     # check if it is to save a single image or multiple images.
     def Save(self):
@@ -307,6 +311,14 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             for f in FilePath:
                 self.FilePath.setText(f)
                 self.update()
+            global trial
+            dir_path = self.FilePath.text()
+            for (dir_path, dir_names, file_names) in walk(dir_path):
+                for file in file_names:
+                    name, extension = os.path.splitext(file)
+                    if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                        trial.append(os.path.join(dir_path, file))
+            print(trial)
         except:
             None
 

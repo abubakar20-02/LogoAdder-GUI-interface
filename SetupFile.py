@@ -74,3 +74,5 @@ SpinBox = ("QSpinBox{\n"
 SetUpFilePath = ProgramFilesFolder + "/Setup.txt"
 
 MainIcon = ResourceFolder + "/Logo.png"
+
+WarningImage = "QLabel{image: url(Resources/Warning.png);}"
