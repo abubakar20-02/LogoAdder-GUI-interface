@@ -11,8 +11,11 @@ import LogoSetting
 import SetupFile
 from os import walk
 
+import popupmsg
+
 PhotoFiles = []
 trial = []
+NumberOfPhotos = 0
 
 
 # checks if required folder is present, if it isn't present, it makes the folder.
@@ -227,7 +230,12 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
             SaveNewImage()
         else:
-            self.SaveMultipleImages()
+            global NumberOfPhotos
+            if not NumberOfPhotos == 0:
+                print("not empty")
+                self.SaveMultipleImages()
+            else:
+                self.openPopUpWindow("No images found in the folder!")
 
     # Open the test model window
     def openLogoSetting(self):
@@ -235,6 +243,13 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window = LogoSetting.MyWindow()
         self.window.show()
         self.window.pushButton.clicked.connect(self.update)
+
+    # Open the pop-up window.
+    def openPopUpWindow(self, message):
+        self.window = QtWidgets.QMainWindow()
+        self.window = popupmsg.MyWindow()
+        self.window.setMessage(message)
+        self.window.show()
 
     # update the main screen with original image and preview of the combined image.
     def update(self):
@@ -254,7 +269,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
         if extension == "":
             print("Folder detected")
-
+            global NumberOfPhotos
             dir_path = self.FilePath.text()
             res = []
             NumberOfPhotos = 0
