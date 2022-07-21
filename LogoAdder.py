@@ -333,17 +333,14 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         FilePath = [u.toLocalFile() for u in event.mimeData().urls()]
         try:
             for f in FilePath:
-                name, extension = os.path.splitext(f)
-                if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-                    self.FilePath.setText(f)
-                    self.update()
+                self.FilePath.setText(f)
+                self.update()
             global trial
             dir_path = self.FilePath.text()
             for (dir_path, dir_names, file_names) in walk(dir_path):
                 for file in file_names:
                     name, extension = os.path.splitext(file)
                     if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-                        self.FilePath.setText(file)
                         trial.append(os.path.join(dir_path, file))
             print(trial)
         except:
