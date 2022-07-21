@@ -39,31 +39,37 @@ def has_transparency(img):
 
 # add logo to the image.
 def AddLogo(OriginalImage):
-    LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
+    try:
+        LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
 
-    Background = Image.open(OriginalImage)
-    BackgroundWidth = Background.size[0]
-    BackgroundHeight = Background.size[1]
+        Background = Image.open(OriginalImage)
+        BackgroundWidth = Background.size[0]
+        BackgroundHeight = Background.size[1]
 
-    Logo = Image.open(LogoPath.strip())
+        Logo = Image.open(LogoPath.strip())
 
-    # resize on the scale of the background
-    Logo = Logo.resize((int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
-    LogoWidth = Logo.size[0]
-    LogoHeight = Logo.size[1]
+        # resize on the scale of the background
+        Logo = Logo.resize(
+            (int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
+        LogoWidth = Logo.size[0]
+        LogoHeight = Logo.size[1]
 
-    maxWidth = BackgroundWidth - LogoWidth
-    maxHeight = BackgroundHeight - LogoHeight
+        maxWidth = BackgroundWidth - LogoWidth
+        maxHeight = BackgroundHeight - LogoHeight
 
-    # set position of logo on the scale of the background
-    if has_transparency(Logo):
-        Background.paste(Logo, (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)),
-                         Logo)
-    else:
-        Background.paste(Logo, (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)))
+        # set position of logo on the scale of the background
+        if has_transparency(Logo):
+            Background.paste(Logo,
+                             (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)),
+                             Logo)
+        else:
+            Background.paste(Logo,
+                             (int((LogoPositionWidth / 100) * maxWidth), int((LogoPositionHeight / 100) * maxHeight)))
 
-    # Save the image in the desired path.
-    Background.save(SetupFile.SavedPath)
+        # Save the image in the desired path.
+        Background.save(SetupFile.SavedPath)
+    except:
+        print("can't add logo")
 
 
 class Ui_MainWindow(QObject):
@@ -198,17 +204,18 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # save multiple combined photos in a folder.
     def SaveMultipleImages(self):
-        directory = str(QFileDialog.getExistingDirectory(None, "Select folder", 'Folder'))
-        dir_path = self.FilePath.text()
-        global PhotoFiles
-        PhotoFiles = []
-        for (dir_path, dir_names, file_names) in walk(dir_path):
-            for file in file_names:
-                name, extension = os.path.splitext(file)
-                if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-                    AddLogo(os.path.join(dir_path, file))
-                    img1 = Image.open(SetupFile.SavedPath)
-                    img1.save(directory + "/" + file)
+        directory= str(QFileDialog.getExistingDirectory(None, "Select folder", 'Folder'))
+        if not len(directory) == 0:
+            dir_path = self.FilePath.text()
+            global PhotoFiles
+            PhotoFiles = []
+            for (dir_path, dir_names, file_names) in walk(dir_path):
+                for file in file_names:
+                    name, extension = os.path.splitext(file)
+                    if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                        AddLogo(os.path.join(dir_path, file))
+                        img1 = Image.open(SetupFile.SavedPath)
+                        img1.save(directory + "/" + file)
 
     # check if it is to save a single image or multiple images.
     def Save(self):
