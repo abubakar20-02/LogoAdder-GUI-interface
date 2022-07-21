@@ -208,7 +208,7 @@ class Ui_Form(QObject):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Settings"))
+        Form.setWindowTitle(_translate("Form", SetupFile.LogoSettingPageTitle))
         self.SelectLogoButton.setText(_translate("Form", "Select Logo"))
         self.LogoSizeText.setText(_translate("Form", "Logo Size:      "))
         self.LogoSizeWidthText.setText(_translate("Form", "w%"))

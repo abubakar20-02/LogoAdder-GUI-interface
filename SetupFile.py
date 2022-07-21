@@ -1,8 +1,12 @@
-#Folder
+# Folder
 ProgramFilesFolder = "Program Files"
 ResourceFolder = "Resources"
 OutputFolder = "Output"
 LogoFolder = "Logo"
+
+LogoSettingPageTitle = "Logo Settings"
+
+MenuTitle_Setting = "Settings"
 
 MainBackground = "background-color: rgb(255, 241, 171)"
 

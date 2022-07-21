@@ -171,8 +171,8 @@ class Ui_MainWindow(QObject):
         MainWindow.setWindowTitle(_translate("MainWindow", "Logo-Adder"))
         self.ImportImageButton.setText(_translate("MainWindow", "Import Image"))
         self.ConvertButton.setText(_translate("MainWindow", "Convert"))
-        self.menuFile.setTitle(_translate("MainWindow", "User"))
-        self.actionSettings.setText(_translate("MainWindow", "Settings"))
+        self.menuFile.setTitle(_translate("MainWindow", SetupFile.MenuTitle_Setting))
+        self.actionSettings.setText(_translate("MainWindow", SetupFile.LogoSettingPageTitle))
 
 
 # save the new combined single image.
@@ -238,21 +238,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if extension == "":
             print("Folder detected")
 
-            self.OriginalImage.setText("Loaded from folder")
-            self.OriginalImage.setAlignment(Qt.AlignCenter)
-            self.OriginalImage.setStyleSheet("QLabel{\n"
-                                             "    border: 1px solid;\n"
-                                             "background-color: white;\n "
-                                             "     }\n"
-                                             "")
-
-            self.PreviewImage.setText("No preview for folder")
-            self.PreviewImage.setAlignment(Qt.AlignCenter)
-            self.PreviewImage.setStyleSheet("QLabel{\n"
-                                            "    border: 1px solid;\n"
-                                            "background-color: white;\n "
-                                            "     }\n"
-                                            "")
             dir_path = self.FilePath.text()
             res = []
             NumberOfPhotos = 0
@@ -267,6 +252,22 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 res.extend(file_names)
             print(PhotoFiles)
             print(NumberOfPhotos)
+
+            self.OriginalImage.setText("Loaded from folder")
+            self.OriginalImage.setAlignment(Qt.AlignCenter)
+            self.OriginalImage.setStyleSheet("QLabel{\n"
+                                             "    border: 1px solid;\n"
+                                             "background-color: white;\n "
+                                             "     }\n"
+                                             "")
+
+            self.PreviewImage.setText("No preview for folder\n Number of Images in folder : "+str(NumberOfPhotos))
+            self.PreviewImage.setAlignment(Qt.AlignCenter)
+            self.PreviewImage.setStyleSheet("QLabel{\n"
+                                            "    border: 1px solid;\n"
+                                            "background-color: white;\n "
+                                            "     }\n"
+                                            "")
 
             # send to add logo to all images
 
