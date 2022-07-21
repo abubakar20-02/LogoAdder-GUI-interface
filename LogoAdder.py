@@ -199,10 +199,16 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     # save multiple combined photos in a folder.
     def SaveMultipleImages(self):
         directory = str(QFileDialog.getExistingDirectory(None, "Select folder", 'Folder'))
-        for files in PhotoFiles:
-            AddLogo(self.FilePath.text() + "/" + files)
-            img1 = Image.open(SetupFile.SavedPath)
-            img1.save(directory + "/" + files)
+        dir_path = self.FilePath.text()
+        global PhotoFiles
+        PhotoFiles = []
+        for (dir_path, dir_names, file_names) in walk(dir_path):
+            for file in file_names:
+                name, extension = os.path.splitext(file)
+                if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                    AddLogo(os.path.join(dir_path, file))
+                    img1 = Image.open(SetupFile.SavedPath)
+                    img1.save(directory + "/" + file)
 
     # check if it is to save a single image or multiple images.
     def Save(self):
@@ -261,7 +267,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                              "     }\n"
                                              "")
 
-            self.PreviewImage.setText("No preview for folder\n Number of Images in folder : "+str(NumberOfPhotos))
+            self.PreviewImage.setText("No preview for folder\n Number of Images in folder : " + str(NumberOfPhotos))
             self.PreviewImage.setAlignment(Qt.AlignCenter)
             self.PreviewImage.setStyleSheet("QLabel{\n"
                                             "    border: 1px solid;\n"
@@ -293,7 +299,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             for f in FilePath:
                 self.FilePath.setText(f)
-                print(f)
                 self.update()
         except:
             None
