@@ -172,7 +172,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionSettings.triggered.connect(self.openLogoSetting)
 
     # add logo to the image.
-    def AddLogo(self,OriginalImage):
+    def AddLogo(self, OriginalImage):
         try:
             LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
 
@@ -333,8 +333,10 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         FilePath = [u.toLocalFile() for u in event.mimeData().urls()]
         try:
             for f in FilePath:
-                self.FilePath.setText(f)
-                self.update()
+                name, extension = os.path.splitext(f)
+                if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG" or extension.upper() == "":
+                    self.FilePath.setText(f)
+                    self.update()
             global trial
             dir_path = self.FilePath.text()
             for (dir_path, dir_names, file_names) in walk(dir_path):
