@@ -1,6 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QObject
 
+import SetupFile
+
 
 class Ui_Form(QObject):
     def setupUi(self, Form):
@@ -57,16 +59,10 @@ class Ui_Form(QObject):
         self.label_3.setMaximumSize(QtCore.QSize(30, 30))
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_3.addWidget(self.label_3)
-        self.doubleSpinBox_3 = QtWidgets.QDoubleSpinBox(Form)
-        self.doubleSpinBox_3.setStyleSheet("QDoubleSpinBox{\n"
-                                           "    border-style: outset;\n"
-                                           "    border-width: 1px;\n"
-                                           "    border-radius: 10px;\n"
-                                           "    border-color:black;\n"
-                                           "    color: solid black;\n"
-                                           "    background-color: white;\n"
-                                           "    }")
+        self.doubleSpinBox_3 = QtWidgets.QSpinBox(Form)
         self.doubleSpinBox_3.setObjectName("doubleSpinBox_3")
+        self.doubleSpinBox_3.setMinimumWidth(60)
+        self.doubleSpinBox_3.setMaximum(10000)
         self.horizontalLayout_3.addWidget(self.doubleSpinBox_3)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem2)
@@ -74,19 +70,13 @@ class Ui_Form(QObject):
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.label_4 = QtWidgets.QLabel(Form)
-        self.label_4.setMaximumSize(QtCore.QSize(30, 30))
+        self.label_4.setMaximumSize(QtCore.QSize(30,30))
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_4.addWidget(self.label_4)
-        self.doubleSpinBox_4 = QtWidgets.QDoubleSpinBox(Form)
-        self.doubleSpinBox_4.setStyleSheet("QDoubleSpinBox{\n"
-                                           "    border-style: outset;\n"
-                                           "    border-width: 1px;\n"
-                                           "    border-radius: 10px;\n"
-                                           "    border-color:black;\n"
-                                           "    background-color: white;\n"
-                                           "    color: solid black;\n"
-                                           "    }")
+        self.doubleSpinBox_4 = QtWidgets.QSpinBox(Form)
         self.doubleSpinBox_4.setObjectName("doubleSpinBox_4")
+        self.doubleSpinBox_4.setMinimumWidth(60)
+        self.doubleSpinBox_4.setMaximum(10000)
         self.horizontalLayout_4.addWidget(self.doubleSpinBox_4)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem3)
@@ -132,8 +122,8 @@ class Ui_Form(QObject):
         self.comboBox.setItemText(3, _translate("Form", "3840 x 2160 4K"))
         self.comboBox.setItemText(4, _translate("Form", "Custom"))
         self.label_5.setText(_translate("Form", "Image Size:      "))
-        self.label_3.setText(_translate("Form", "w%"))
-        self.label_4.setText(_translate("Form", "h%"))
+        self.label_3.setText(_translate("Form", "w:"))
+        self.label_4.setText(_translate("Form", "h:"))
         self.pushButton.setText(_translate("Form", "Apply Changes"))
 
 
@@ -141,14 +131,43 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.doubleSpinBox_3.setStyleSheet(SetupFile.SpinBox)
+        self.doubleSpinBox_4.setStyleSheet(SetupFile.SpinBox)
+
         self.radioButton.clicked.connect(self.checkRadio)
         self.comboBox.currentIndexChanged.connect(self.checkCombo)
+        self.pushButton.clicked.connect(self.ApplyChanges)
+
+    def ApplyChanges(self):
+        print("apply changes")
 
     def checkRadio(self):
         print(self.radioButton.isChecked())
+        if self.radioButton.isChecked():
+            print("block everything below")
+            self.EnableButtons(False)
+        else:
+            print("Enable everything below")
+            self.EnableButtons(True)
+        self.checkCombo()
 
     def checkCombo(self):
         print(self.comboBox.currentText())
+        if (not self.radioButton.isChecked()) and self.comboBox.currentIndex() == 4:
+            self.EnableImageSize(True)
+        else:
+            self.EnableImageSize(False)
+
+    def EnableButtons(self, Boolean):
+        self.comboBox.setEnabled(Boolean)
+        self.label.setEnabled(Boolean)
+
+    def EnableImageSize(self, Boolean):
+        self.label_4.setEnabled(Boolean)
+        self.label_3.setEnabled(Boolean)
+        self.label_5.setEnabled(Boolean)
+        self.doubleSpinBox_3.setEnabled(Boolean)
+        self.doubleSpinBox_4.setEnabled(Boolean)
 
 
 if __name__ == "__main__":
