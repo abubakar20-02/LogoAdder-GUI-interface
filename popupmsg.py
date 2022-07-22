@@ -8,7 +8,7 @@ import SetupFile
 class Ui_Form(QObject):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.setFixedSize(285, 105)
+        Form.setFixedSize(350, 105)
 
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(Form)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")

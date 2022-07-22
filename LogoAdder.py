@@ -337,6 +337,14 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG" or extension.upper() == "":
                     self.FilePath.setText(f)
                     self.update()
+                else:
+                    self.OriginalImage.setStyleSheet(SetupFile.EmptyImage)
+                    self.OriginalImage.setText("")
+                    self.PreviewImage.setStyleSheet(SetupFile.EmptyImage)
+                    self.PreviewImage.setText("")
+                    self.FilePath.setText("")
+                    self.openPopUpWindow("Please drop a folder or an image file")
+
             global trial
             dir_path = self.FilePath.text()
             for (dir_path, dir_names, file_names) in walk(dir_path):
