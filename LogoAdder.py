@@ -1,6 +1,7 @@
 import os
+import threading
+import time
 from os.path import exists
-
 from PIL import Image
 from PIL.Image import Resampling
 from PyQt5 import QtCore, QtWidgets
@@ -10,6 +11,7 @@ from PyQt5.QtWidgets import QFileDialog, QApplication
 
 import ImageSettingPage
 import LogoSetting
+import ProgressBar
 import SetupFile
 from os import walk
 
@@ -246,40 +248,47 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # save multiple combined photos in a folder.
     def SaveMultipleImages(self):
-        LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
-        print(len(LogoPath.strip()))
-        if not len(LogoPath.strip()) == 0:
-            global trial
-            directory = str(QFileDialog.getExistingDirectory(None, "Select folder", 'Folder'))
-            if not len(directory) == 0:
-                dir_path = self.FilePath.text()
-                global PhotoFiles
-                PhotoFiles = []
-                for (dir_path, dir_names, file_names) in walk(dir_path):
-                    for file in file_names:
-                        name, extension = os.path.splitext(file)
-                        if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-                            trial.append(os.path.join(dir_path, file))
-                            self.AddLogo(os.path.join(dir_path, file))
-                            img1 = Image.open(SetupFile.SavedPathWithLogo)
-                            img1.save(directory + "/" + file)
-                print(trial)
-        else:
-            print("yo")
-            self.openPopUpWindow("Logo not found!")
+        print("Start of multiple save")
+        directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        self.showProgressBar()
+        t = threading.Thread(target=self.method_name, args=(directory,))
+        t.start()
+
+    def method_name(self, directory):
+        global trial
+        if not len(directory) == 0:
+            dir_path = self.FilePath.text()
+            global PhotoFiles
+            PhotoFiles = []
+            total = 0
+            for (dir_path, dir_names, file_names) in walk(dir_path):
+                for file in file_names:
+                    name, extension = os.path.splitext(file)
+                    if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                        trial.append(os.path.join(dir_path, file))
+                        self.AddLogo(os.path.join(dir_path, file))
+                        total = total + 1
+                        print(total)
+                        img1 = Image.open(SetupFile.SavedPathWithLogo)
+                        img1.save(directory + "/" + file)
+            print(trial)
 
     # check if it is to save a single image or multiple images.
     def Save(self):
         name, extension = os.path.splitext(self.FilePath.text())
-        if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-            SaveNewImage()
-        else:
-            global NumberOfPhotos
-            if not NumberOfPhotos == 0:
-                print("not empty")
-                self.SaveMultipleImages()
+        LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
+        if not len(LogoPath.strip()) == 0:
+            if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                SaveNewImage()
             else:
-                self.openPopUpWindow("No images found in the folder!")
+                global NumberOfPhotos
+                if not NumberOfPhotos == 0:
+                    print("not empty")
+                    self.SaveMultipleImages()
+                else:
+                    self.openPopUpWindow("No images found in the folder!")
+        else:
+            self.openPopUpWindow("Logo not found!")
 
     # Open the test model window
     def openLogoSetting(self):
@@ -295,12 +304,17 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window.show()
         self.window.pushButton.clicked.connect(self.update)
 
-
     # Open the pop-up window.
     def openPopUpWindow(self, message):
         self.window = QtWidgets.QMainWindow()
         self.window = popupmsg.MyWindow()
         self.window.setMessage(message)
+        self.window.show()
+
+    def showProgressBar(self):
+        print("hi")
+        self.window = QtWidgets.QMainWindow()
+        self.window = ProgressBar.MyWindow()
         self.window.show()
 
     # update the main screen with original image and preview of the combined image.
