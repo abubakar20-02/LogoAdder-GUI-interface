@@ -44,9 +44,12 @@ FilePath = ("QLabel{\n"
 MenuBar = "QMenuBar{background-color: white}""QMenu{background-color: white}""QMenu::item:selected { ""background" \
           "-color: #1261A0;color: rgb(255,255,""255);} "
 
-SavedPath = ResourceFolder + "/saved.png"
+SavedPathWithLogo = ResourceFolder + "/SavedwithLogo.png"
 
-PreviewImage = ("QLabel{border: 1px solid;image: url(" + SavedPath + ");background-color: gray;}")
+SavedPathWithResize = ResourceFolder + "/SavedwithResize.png"
+
+
+PreviewImage = ("QLabel{border: 1px solid;image: url(" + SavedPathWithLogo + ");background-color: gray;}")
 
 Slider = ("QSlider::groove:horizontal {\n"
           "    border: 1px solid black;\n"

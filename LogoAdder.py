@@ -2,6 +2,7 @@ import os
 from os.path import exists
 
 from PIL import Image
+from PIL.Image import Resampling
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject, Qt
 from PyQt5.QtGui import QIcon
@@ -155,13 +156,14 @@ class Ui_MainWindow(QObject):
         self.LogoSetting.setText(_translate("MainWindow", SetupFile.LogoSettingPageTitle))
         self.ImageSetting.setText(_translate("MainWindow", SetupFile.ImageSettingPageTitle))
 
+
 # save the new combined single image.
 def SaveNewImage():
-    if exists(SetupFile.SavedPath):
+    if exists(SetupFile.SavedPathWithLogo):
         savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
                                                        "Output", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
         if check:
-            img1 = Image.open(SetupFile.SavedPath)
+            img1 = Image.open(SetupFile.SavedPathWithLogo)
             img1.save(savedFile)
             os.startfile(savedFile)
 
@@ -181,8 +183,8 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def AddLogo(self, OriginalImage):
         try:
             LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
-
-            Background = Image.open(OriginalImage)
+            self.resizeImage(OriginalImage)
+            Background = Image.open(SetupFile.SavedPathWithResize)
             BackgroundWidth = Background.size[0]
             BackgroundHeight = Background.size[1]
 
@@ -190,6 +192,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 print("not found")
                 self.openPopUpWindow("No logo found!")
             else:
+                # insert resized photo below
                 Logo = Image.open(LogoPath.strip())
                 # resize on the scale of the background
                 Logo = Logo.resize(
@@ -212,9 +215,34 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                       int((LogoPositionHeight / 100) * maxHeight)))
 
                 # Save the image in the desired path.
-                Background.save(SetupFile.SavedPath)
+                Background.save(SetupFile.SavedPathWithLogo)
         except:
             print("can't add logo")
+
+    def resizeImage(self, originalImagePath):
+        img = Image.open(originalImagePath)
+        file = open(SetupFile.ImageSetupFilePath, "r")
+        RadioButtonFlagText = file.readline().strip()
+        if RadioButtonFlagText == "True":
+            RadioButtonChecked = True
+        else:
+            RadioButtonChecked = False
+        ComboBoxCurrentIndex = int(file.readline().strip())
+        ImageWidth = int(file.readline().strip())
+        ImageHeight = int(file.readline().strip())
+        file.close()
+        if not RadioButtonChecked:
+            if ComboBoxCurrentIndex == 0:
+                img = img.resize((1280, 720), Resampling.LANCZOS)
+            if ComboBoxCurrentIndex == 1:
+                img = img.resize((1920, 1080), Resampling.LANCZOS)
+            if ComboBoxCurrentIndex == 2:
+                img = img.resize((2560, 1440), Resampling.LANCZOS)
+            if ComboBoxCurrentIndex == 3:
+                img = img.resize((3840, 2160), Resampling.LANCZOS)
+            if ComboBoxCurrentIndex == 4:
+                img = img.resize((ImageWidth, ImageHeight), Resampling.LANCZOS)
+        img.save(SetupFile.SavedPathWithResize)
 
     # save multiple combined photos in a folder.
     def SaveMultipleImages(self):
@@ -233,7 +261,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
                             trial.append(os.path.join(dir_path, file))
                             self.AddLogo(os.path.join(dir_path, file))
-                            img1 = Image.open(SetupFile.SavedPath)
+                            img1 = Image.open(SetupFile.SavedPathWithLogo)
                             img1.save(directory + "/" + file)
                 print(trial)
         else:
@@ -265,6 +293,8 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window = QtWidgets.QMainWindow()
         self.window = ImageSettingPage.MyWindow()
         self.window.show()
+        self.window.pushButton.clicked.connect(self.update)
+
 
     # Open the pop-up window.
     def openPopUpWindow(self, message):
@@ -370,8 +400,10 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # when user closes the main window, remove temp files and close all other sub windows.
     def closeEvent(self, event):
-        if exists(SetupFile.SavedPath):
-            os.remove(SetupFile.SavedPath)
+        if exists(SetupFile.SavedPathWithLogo):
+            os.remove(SetupFile.SavedPathWithLogo)
+        if exists(SetupFile.SavedPathWithResize):
+            os.remove(SetupFile.SavedPathWithResize)
         for window in QApplication.topLevelWidgets():
             window.close()
 
