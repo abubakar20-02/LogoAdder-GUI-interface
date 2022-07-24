@@ -7,6 +7,7 @@ from PyQt5.QtCore import QObject, Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QApplication
 
+import ImageSettingPage
 import LogoSetting
 import SetupFile
 from os import walk
@@ -133,11 +134,15 @@ class Ui_MainWindow(QObject):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-        self.actionSettings = QtWidgets.QAction(MainWindow)
-        self.actionSettings.setObjectName("actionSettings")
-        self.menuFile.addAction(self.actionSettings)
+        self.LogoSetting = QtWidgets.QAction(MainWindow)
+        self.LogoSetting.setObjectName("LogoSetting")
+        self.menuFile.addAction(self.LogoSetting)
         self.menubar.addAction(self.menuFile.menuAction())
 
+        self.ImageSetting = QtWidgets.QAction(MainWindow)
+        self.ImageSetting.setObjectName("ImageSetting")
+        self.menuFile.addAction(self.ImageSetting)
+        self.menubar.addAction(self.menuFile.menuAction())
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -147,8 +152,8 @@ class Ui_MainWindow(QObject):
         self.ImportImageButton.setText(_translate("MainWindow", "Import Image"))
         self.ConvertButton.setText(_translate("MainWindow", "Convert"))
         self.menuFile.setTitle(_translate("MainWindow", SetupFile.MenuTitle_Setting))
-        self.actionSettings.setText(_translate("MainWindow", SetupFile.LogoSettingPageTitle))
-
+        self.LogoSetting.setText(_translate("MainWindow", SetupFile.LogoSettingPageTitle))
+        self.ImageSetting.setText(_translate("MainWindow", SetupFile.ImageSettingPageTitle))
 
 # save the new combined single image.
 def SaveNewImage():
@@ -169,7 +174,8 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QIcon(SetupFile.MainIcon))
         self.ImportImageButton.clicked.connect(self.ImportImage)
         self.ConvertButton.clicked.connect(self.Save)
-        self.actionSettings.triggered.connect(self.openLogoSetting)
+        self.LogoSetting.triggered.connect(self.openLogoSetting)
+        self.ImageSetting.triggered.connect(self.openImageSetting)
 
     # add logo to the image.
     def AddLogo(self, OriginalImage):
@@ -253,6 +259,12 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window = LogoSetting.MyWindow()
         self.window.show()
         self.window.pushButton.clicked.connect(self.update)
+
+    # Open the test model window
+    def openImageSetting(self):
+        self.window = QtWidgets.QMainWindow()
+        self.window = ImageSettingPage.MyWindow()
+        self.window.show()
 
     # Open the pop-up window.
     def openPopUpWindow(self, message):

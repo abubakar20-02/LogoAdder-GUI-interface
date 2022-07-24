@@ -5,6 +5,7 @@ OutputFolder = "Output"
 LogoFolder = "Logo"
 
 LogoSettingPageTitle = "Logo Settings"
+ImageSettingPageTitle = "Image Settings"
 
 MenuTitle_Setting = "Settings"
 

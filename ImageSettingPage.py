@@ -2,6 +2,7 @@ from os.path import exists
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject
+from PyQt5.QtGui import QIcon
 
 import SetupFile
 
@@ -134,6 +135,8 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setWindowTitle(SetupFile.ImageSettingPageTitle)
+        self.setWindowIcon(QIcon(SetupFile.MainIcon))
         FilePresentEnsured()
         self.method()
         self.ImageWidth.setStyleSheet(SetupFile.SpinBox)
