@@ -71,7 +71,23 @@ SpinBox = ("QSpinBox{\n"
            "    background-color: white;\n"
            "    }")
 
+ComboBox = ("QComboBox{\n"
+            "    border-style: outset;\n"
+            "    border-width: 1px;\n"
+            "    border-radius: 10px;\n"
+            "    border-color:black;\n"
+            "    color: solid black;\n"
+            "    background-color: white;\n"
+            "    }"
+            "QListView"
+            "{"
+            "background-color: white;"
+            "}"
+            )
+
 SetUpFilePath = ProgramFilesFolder + "/Setup.txt"
+
+ImageSetupFilePath = ProgramFilesFolder + "/ImageSetup.txt"
 
 MainIcon = ResourceFolder + "/Logo.png"
 

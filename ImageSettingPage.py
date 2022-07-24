@@ -1,4 +1,6 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from os.path import exists
+
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject
 
 import SetupFile
@@ -10,7 +12,7 @@ class Ui_Form(QObject):
         Form.resize(314, 242)
         Form.setMinimumSize(QtCore.QSize(0, 0))
         Form.setMaximumSize(QtCore.QSize(660, 400))
-        Form.setStyleSheet("background-color: rgb(255, 241, 171)")
+        Form.setStyleSheet(SetupFile.MainBackground)
         self.verticalLayout = QtWidgets.QVBoxLayout(Form)
         self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout = QtWidgets.QHBoxLayout()
@@ -42,42 +44,43 @@ class Ui_Form(QObject):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.comboBox.addItem("")
+        self.comboBox.setStyleSheet(SetupFile.ComboBox)
         self.horizontalLayout_11.addWidget(self.comboBox)
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_11.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout_11)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.label_5 = QtWidgets.QLabel(Form)
-        self.label_5.setObjectName("label_5")
-        self.horizontalLayout_5.addWidget(self.label_5)
+        self.ImageSizeText = QtWidgets.QLabel(Form)
+        self.ImageSizeText.setObjectName("ImageSizeText")
+        self.horizontalLayout_5.addWidget(self.ImageSizeText)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.label_3 = QtWidgets.QLabel(Form)
-        self.label_3.setMaximumSize(QtCore.QSize(30, 30))
-        self.label_3.setObjectName("label_3")
-        self.horizontalLayout_3.addWidget(self.label_3)
-        self.doubleSpinBox_3 = QtWidgets.QSpinBox(Form)
-        self.doubleSpinBox_3.setObjectName("doubleSpinBox_3")
-        self.doubleSpinBox_3.setMinimumWidth(60)
-        self.doubleSpinBox_3.setMaximum(10000)
-        self.horizontalLayout_3.addWidget(self.doubleSpinBox_3)
+        self.ImageSizeWidthText = QtWidgets.QLabel(Form)
+        self.ImageSizeWidthText.setMaximumSize(QtCore.QSize(30, 30))
+        self.ImageSizeWidthText.setObjectName("ImageSizeWidthText")
+        self.horizontalLayout_3.addWidget(self.ImageSizeWidthText)
+        self.ImageWidth = QtWidgets.QSpinBox(Form)
+        self.ImageWidth.setObjectName("ImageWidth")
+        self.ImageWidth.setMinimumWidth(60)
+        self.ImageWidth.setMaximum(10000)
+        self.horizontalLayout_3.addWidget(self.ImageWidth)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem2)
         self.verticalLayout_2.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
-        self.label_4 = QtWidgets.QLabel(Form)
-        self.label_4.setMaximumSize(QtCore.QSize(30,30))
-        self.label_4.setObjectName("label_4")
-        self.horizontalLayout_4.addWidget(self.label_4)
-        self.doubleSpinBox_4 = QtWidgets.QSpinBox(Form)
-        self.doubleSpinBox_4.setObjectName("doubleSpinBox_4")
-        self.doubleSpinBox_4.setMinimumWidth(60)
-        self.doubleSpinBox_4.setMaximum(10000)
-        self.horizontalLayout_4.addWidget(self.doubleSpinBox_4)
+        self.ImageSizeHeightText = QtWidgets.QLabel(Form)
+        self.ImageSizeHeightText.setMaximumSize(QtCore.QSize(30, 30))
+        self.ImageSizeHeightText.setObjectName("ImageSizeHeightText")
+        self.horizontalLayout_4.addWidget(self.ImageSizeHeightText)
+        self.ImageHeight = QtWidgets.QSpinBox(Form)
+        self.ImageHeight.setObjectName("ImageHeight")
+        self.ImageHeight.setMinimumWidth(60)
+        self.ImageHeight.setMaximum(10000)
+        self.horizontalLayout_4.addWidget(self.ImageHeight)
         spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem3)
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
@@ -88,26 +91,12 @@ class Ui_Form(QObject):
         spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem4)
         self.pushButton = QtWidgets.QPushButton(Form)
-        self.pushButton.setStyleSheet("QPushButton {\n"
-                                      "    background-color: rgb(107, 0, 0);\n"
-                                      "    border-style: outset;\n"
-                                      "    border-width: 1px;\n"
-                                      "    border-radius: 10px;\n"
-                                      "    border-color:white;\n"
-                                      "    color: rgb(255, 241, 171);\n"
-                                      "    font: bold 12px;\n"
-                                      "    min-width: 10em;\n"
-                                      "    padding: 6px;\n"
-                                      "}\n"
-                                      "QPushButton:hover {\n"
-                                      "    color: white;\n"
-                                      "}")
+        self.pushButton.setStyleSheet(SetupFile.Button)
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout_2.addWidget(self.pushButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
         self.retranslateUi(Form)
-        self.comboBox.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
@@ -121,25 +110,63 @@ class Ui_Form(QObject):
         self.comboBox.setItemText(2, _translate("Form", "2560 x 1440 2K"))
         self.comboBox.setItemText(3, _translate("Form", "3840 x 2160 4K"))
         self.comboBox.setItemText(4, _translate("Form", "Custom"))
-        self.label_5.setText(_translate("Form", "Image Size:      "))
-        self.label_3.setText(_translate("Form", "w:"))
-        self.label_4.setText(_translate("Form", "h:"))
+        self.ImageSizeText.setText(_translate("Form", "Image Size:      "))
+        self.ImageSizeWidthText.setText(_translate("Form", "w:"))
+        self.ImageSizeHeightText.setText(_translate("Form", "h:"))
         self.pushButton.setText(_translate("Form", "Apply Changes"))
+
+
+def FilePresentEnsured():
+    if not exists(SetupFile.ImageSetupFilePath):
+        method_name(True, 0, 0, 0)
+
+
+def method_name(RadioButton, ComboBoxIndex, ImageWidth, ImageHeight):
+    file = open(SetupFile.ImageSetupFilePath, "w")
+    file.write(str(RadioButton) + "\n")
+    file.write(str(ComboBoxIndex) + "\n")
+    file.write(str(ImageWidth) + "\n")
+    file.write(str(ImageHeight) + "\n")
+    file.close()
 
 
 class MyWindow(QtWidgets.QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.doubleSpinBox_3.setStyleSheet(SetupFile.SpinBox)
-        self.doubleSpinBox_4.setStyleSheet(SetupFile.SpinBox)
+        FilePresentEnsured()
+        self.method()
+        self.ImageWidth.setStyleSheet(SetupFile.SpinBox)
+        self.ImageHeight.setStyleSheet(SetupFile.SpinBox)
 
         self.radioButton.clicked.connect(self.checkRadio)
         self.comboBox.currentIndexChanged.connect(self.checkCombo)
         self.pushButton.clicked.connect(self.ApplyChanges)
 
+    def method(self):
+        file = open(SetupFile.ImageSetupFilePath, "r")
+        RadioButtonFlagText = file.readline().strip()
+        if RadioButtonFlagText == "True":
+            Flag = True
+        else:
+            Flag = False
+
+        self.radioButton.setChecked(Flag)
+        self.comboBox.setCurrentIndex(int(file.readline().strip()))
+        self.ImageWidth.setValue(int(file.readline().strip()))
+        self.ImageHeight.setValue(int(file.readline().strip()))
+        file.close()
+        self.checkRadio()
+
     def ApplyChanges(self):
         print("apply changes")
+        method_name(self.radioButton.isChecked(), self.comboBox.currentIndex(), self.ImageWidth.value(),
+                    self.ImageHeight.value())
+
+        print(self.radioButton.isChecked())
+        print(self.comboBox.currentIndex())
+        print(self.ImageWidth.value())
+        print(self.ImageHeight.value())
 
     def checkRadio(self):
         print(self.radioButton.isChecked())
@@ -163,11 +190,11 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.label.setEnabled(Boolean)
 
     def EnableImageSize(self, Boolean):
-        self.label_4.setEnabled(Boolean)
-        self.label_3.setEnabled(Boolean)
-        self.label_5.setEnabled(Boolean)
-        self.doubleSpinBox_3.setEnabled(Boolean)
-        self.doubleSpinBox_4.setEnabled(Boolean)
+        self.ImageSizeHeightText.setEnabled(Boolean)
+        self.ImageSizeWidthText.setEnabled(Boolean)
+        self.ImageSizeText.setEnabled(Boolean)
+        self.ImageWidth.setEnabled(Boolean)
+        self.ImageHeight.setEnabled(Boolean)
 
 
 if __name__ == "__main__":
