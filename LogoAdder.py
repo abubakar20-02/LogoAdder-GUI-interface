@@ -1,5 +1,6 @@
 import os
 import threading
+from threading import *
 import time
 from os.path import exists
 from PIL import Image
@@ -20,6 +21,8 @@ import popupmsg
 PhotoFiles = []
 trial = []
 NumberOfPhotos = 0
+total = 0
+event = Event()
 
 
 # checks if required folder is present, if it isn't present, it makes the folder.
@@ -260,13 +263,16 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             dir_path = self.FilePath.text()
             global PhotoFiles
             PhotoFiles = []
+            global total
             total = 0
             for (dir_path, dir_names, file_names) in walk(dir_path):
                 for file in file_names:
                     name, extension = os.path.splitext(file)
+                    event.set()
                     if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
                         trial.append(os.path.join(dir_path, file))
                         self.AddLogo(os.path.join(dir_path, file))
+                        event.clear()
                         total = total + 1
                         print(total)
                         img1 = Image.open(SetupFile.SavedPathWithLogo)
@@ -316,6 +322,20 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window = QtWidgets.QMainWindow()
         self.window = ProgressBar.MyWindow()
         self.window.show()
+        t = threading.Thread(target=self.updateProgressBar, args=(self.window,))
+        t.start()
+
+    def updateProgressBar(self, window):
+        while True:
+            event.wait()
+            while event.isSet():
+                global NumberOfPhotos
+                global total
+                print("%: "+ str(total/NumberOfPhotos))
+                if total-1 < NumberOfPhotos:
+                    window.updateProgressBar(total, NumberOfPhotos)
+                else:
+                    break
 
     # update the main screen with original image and preview of the combined image.
     def update(self):

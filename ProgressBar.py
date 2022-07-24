@@ -48,6 +48,9 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.setStyleSheet(SetupFile.MainBackground)
         self.CancelButton.setStyleSheet(SetupFile.Button)
 
+    def updateProgressBar(self, current, Max):
+        self.progressBar.setValue((current / Max)*100)
+
 
 if __name__ == "__main__":
     import sys
