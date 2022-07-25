@@ -6,7 +6,7 @@ from os.path import exists
 from PIL import Image
 from PIL.Image import Resampling
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QObject, Qt
+from PyQt5.QtCore import QObject, Qt, QRunnable, pyqtSlot, QThreadPool, QThread
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QApplication
 
@@ -259,20 +259,18 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def method_name(self, directory):
         global trial
+        global total
         if not len(directory) == 0:
             dir_path = self.FilePath.text()
             global PhotoFiles
             PhotoFiles = []
-            global total
             total = 0
             for (dir_path, dir_names, file_names) in walk(dir_path):
                 for file in file_names:
                     name, extension = os.path.splitext(file)
-                    event.set()
                     if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
                         trial.append(os.path.join(dir_path, file))
                         self.AddLogo(os.path.join(dir_path, file))
-                        event.clear()
                         total = total + 1
                         print(total)
                         img1 = Image.open(SetupFile.SavedPathWithLogo)
@@ -322,20 +320,12 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window = QtWidgets.QMainWindow()
         self.window = ProgressBar.MyWindow()
         self.window.show()
-        t = threading.Thread(target=self.updateProgressBar, args=(self.window,))
-        t.start()
+        self.my_method1(self.window)
 
-    def updateProgressBar(self, window):
-        while True:
-            event.wait()
-            while event.isSet():
-                global NumberOfPhotos
-                global total
-                print("%: "+ str(total/NumberOfPhotos))
-                if total-1 < NumberOfPhotos:
-                    window.updateProgressBar(total, NumberOfPhotos)
-                else:
-                    break
+    @QtCore.pyqtSlot()
+    def my_method1(self, window):
+        self.loadthread = MyThread1(window)
+        self.loadthread.start()
 
     # update the main screen with original image and preview of the combined image.
     def update(self):
@@ -440,6 +430,22 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             os.remove(SetupFile.SavedPathWithResize)
         for window in QApplication.topLevelWidgets():
             window.close()
+
+
+class MyThread1(QThread):
+    def __init__(self, window):
+        QThread.__init__(self)
+        self.window = window
+
+    def run(self):
+        while True:
+            global NumberOfPhotos
+            global total
+            print(total)
+            if not (total == NumberOfPhotos+1):
+                self.window.updateProgressBar(total, NumberOfPhotos)
+            if total == NumberOfPhotos:
+                break
 
 
 if __name__ == "__main__":
