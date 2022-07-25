@@ -7,7 +7,7 @@ from threading import *
 from PIL import Image
 from PIL.Image import Resampling
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QObject, Qt, QThread
+from PyQt5.QtCore import QObject, Qt, QThread, QMutex
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QApplication
 
@@ -22,6 +22,7 @@ trial = []
 NumberOfPhotos = 0
 total = 0
 event = Event()
+mutex = QMutex()
 
 
 # checks if required folder is present, if it isn't present, it makes the folder.
@@ -222,6 +223,9 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except:
             print("can't add logo")
 
+    def trial(self):
+        print("trial")
+
     # method to resize original image.
     def resizeImage(self, originalImagePath):
         img = Image.open(originalImagePath)
@@ -253,14 +257,24 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         print("Start of multiple save")
         directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         self.showProgressBar()
-        SaveMultipleImage = threading.Thread(target=self.SaveMultipleImage, args=(directory,))
-        SaveMultipleImage.start()
 
-    def SaveMultipleImage(self, directory):
+        self.window = QtWidgets.QMainWindow()
+        self.window = MyWindow()
+        self.x(self.window, directory, self.FilePath.text())
+        # SaveMultipleImage = threading.Thread(target=self.SaveMultipleImage, args=(directory,))
+        # SaveMultipleImage.start()
+
+    @QtCore.pyqtSlot()
+    def x(self, window, directory, FilePath):
+        self.loadthread = MultipleImages(window, directory, FilePath)
+        self.loadthread.start()
+
+    def SaveMultipleImage(self, directory, dir_path):
         global trial
         global total
         if not len(directory) == 0:
-            dir_path = self.FilePath.text()
+            print("directory: " + directory)
+            print("dir_path: " + dir_path)
             global PhotoFiles
             PhotoFiles = []
             total = 0
@@ -270,10 +284,12 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
                         trial.append(os.path.join(dir_path, file))
                         self.AddLogo(os.path.join(dir_path, file))
+                        mutex.lock()
                         total = total + 1
                         print(total)
                         img1 = Image.open(SetupFile.SavedPathWithLogo)
                         img1.save(directory + "/" + file)
+                        mutex.unlock()
             print(trial)
 
     # check if it is to save a single image or multiple images.
@@ -441,11 +457,23 @@ class UpdateProgressBar(QThread):
         while True:
             global NumberOfPhotos
             global total
-            print(total)
             if not (total == NumberOfPhotos + 1):
                 self.window.updateProgressBar(total, NumberOfPhotos)
             if total == NumberOfPhotos:
                 break
+
+
+class MultipleImages(QThread):
+    def __init__(self, window, directory, FilePath):
+        QThread.__init__(self)
+        self.window = window
+        self.directory = directory
+        self.FilePath = FilePath
+
+    def run(self):
+        print("heyyyyyyyyyyyyyy" + self.directory)
+        self.window.SaveMultipleImage(self.directory, self.FilePath)
+        self.window.trial()
 
 
 if __name__ == "__main__":
