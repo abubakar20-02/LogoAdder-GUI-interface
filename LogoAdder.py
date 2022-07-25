@@ -1,12 +1,13 @@
 import os
 import threading
-from threading import *
-import time
+from os import walk
 from os.path import exists
+from threading import *
+
 from PIL import Image
 from PIL.Image import Resampling
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QObject, Qt, QRunnable, pyqtSlot, QThreadPool, QThread
+from PyQt5.QtCore import QObject, Qt, QThread
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QApplication
 
@@ -14,8 +15,6 @@ import ImageSettingPage
 import LogoSetting
 import ProgressBar
 import SetupFile
-from os import walk
-
 import popupmsg
 
 PhotoFiles = []
@@ -197,7 +196,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 print("not found")
                 self.openPopUpWindow("No logo found!")
             else:
-                # insert resized photo below
                 Logo = Image.open(LogoPath.strip())
                 # resize on the scale of the background
                 Logo = Logo.resize(
@@ -224,6 +222,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except:
             print("can't add logo")
 
+    # method to resize original image.
     def resizeImage(self, originalImagePath):
         img = Image.open(originalImagePath)
         file = open(SetupFile.ImageSetupFilePath, "r")
@@ -254,10 +253,10 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         print("Start of multiple save")
         directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         self.showProgressBar()
-        t = threading.Thread(target=self.method_name, args=(directory,))
-        t.start()
+        SaveMultipleImage = threading.Thread(target=self.SaveMultipleImage, args=(directory,))
+        SaveMultipleImage.start()
 
-    def method_name(self, directory):
+    def SaveMultipleImage(self, directory):
         global trial
         global total
         if not len(directory) == 0:
@@ -315,16 +314,17 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window.setMessage(message)
         self.window.show()
 
+    # Show the progress bar.
     def showProgressBar(self):
         print("hi")
         self.window = QtWidgets.QMainWindow()
         self.window = ProgressBar.MyWindow()
         self.window.show()
-        self.my_method1(self.window)
+        self.ContinuouslyUpdateProgressBar(self.window)
 
     @QtCore.pyqtSlot()
-    def my_method1(self, window):
-        self.loadthread = MyThread1(window)
+    def ContinuouslyUpdateProgressBar(self, window):
+        self.loadthread = UpdateProgressBar(window)
         self.loadthread.start()
 
     # update the main screen with original image and preview of the combined image.
@@ -432,7 +432,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             window.close()
 
 
-class MyThread1(QThread):
+class UpdateProgressBar(QThread):
     def __init__(self, window):
         QThread.__init__(self)
         self.window = window
@@ -442,7 +442,7 @@ class MyThread1(QThread):
             global NumberOfPhotos
             global total
             print(total)
-            if not (total == NumberOfPhotos+1):
+            if not (total == NumberOfPhotos + 1):
                 self.window.updateProgressBar(total, NumberOfPhotos)
             if total == NumberOfPhotos:
                 break
