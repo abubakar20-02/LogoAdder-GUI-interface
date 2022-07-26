@@ -19,7 +19,6 @@ PhotoFiles = []
 trial = []
 NumberOfPhotos = 0
 total = 0
-sem = QSemaphore(1)
 
 
 # checks if required folder is present, if it isn't present, it makes the folder.
@@ -283,7 +282,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         self.AddLogo(os.path.join(dir_path, file))
                         total = total + 1
                         print(total/NumberOfPhotos)
-                        ProgressBar.updateProgressBar(total, NumberOfPhotos)
+                        ProgressBar.updateProgressBar(total, NumberOfPhotos)#Number of photos might be being accessed somewhere
                         img1 = Image.open(SetupFile.SavedPathWithLogo)
                         img1.save(directory + "/" + file)
             # print(trial)
