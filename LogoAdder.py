@@ -1,11 +1,12 @@
 import os
+import time
 from os import walk
 from os.path import exists
 
 from PIL import Image
 from PIL.Image import Resampling
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QObject, Qt, QThread, QSemaphore
+from PyQt5.QtCore import QObject, Qt, QThread, QSemaphore, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QApplication
 
@@ -42,6 +43,108 @@ def has_transparency(img):
             return True
 
     return False
+
+
+# save the new combined single image.
+def SaveNewImage():
+    if exists(SetupFile.SavedPathWithLogo):
+        savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
+                                                       "Output", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
+        if check:
+            img1 = Image.open(SetupFile.SavedPathWithLogo)
+            img1.save(savedFile)
+            os.startfile(savedFile)
+
+
+# add logo to the image.
+def AddLogo(OriginalImage):
+    try:
+        LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
+        resizeImage(OriginalImage)
+        Background = Image.open(SetupFile.SavedPathWithResize)
+        BackgroundWidth = Background.size[0]
+        BackgroundHeight = Background.size[1]
+
+        if len(LogoPath.strip()) == 0:
+            print("not found")
+            # self.openPopUpWindow("No logo found!")
+        else:
+            Logo = Image.open(LogoPath.strip())
+            # resize on the scale of the background
+            Logo = Logo.resize(
+                (int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
+            LogoWidth = Logo.size[0]
+            LogoHeight = Logo.size[1]
+
+            maxWidth = BackgroundWidth - LogoWidth
+            maxHeight = BackgroundHeight - LogoHeight
+
+            # set position of logo on the scale of the background
+            if has_transparency(Logo):
+                Background.paste(Logo,
+                                 (int((LogoPositionWidth / 100) * maxWidth),
+                                  int((LogoPositionHeight / 100) * maxHeight)),
+                                 Logo)
+            else:
+                Background.paste(Logo,
+                                 (int((LogoPositionWidth / 100) * maxWidth),
+                                  int((LogoPositionHeight / 100) * maxHeight)))
+
+            # Save the image in the desired path.
+            Background.save(SetupFile.SavedPathWithLogo)
+    except:
+        print("can't add logo")
+
+
+# method to resize original image.
+def resizeImage(originalImagePath):
+    img = Image.open(originalImagePath)
+    file = open(SetupFile.ImageSetupFilePath, "r")
+    RadioButtonFlagText = file.readline().strip()
+    if RadioButtonFlagText == "True":
+        RadioButtonChecked = True
+    else:
+        RadioButtonChecked = False
+    ComboBoxCurrentIndex = int(file.readline().strip())
+    ImageWidth = int(file.readline().strip())
+    ImageHeight = int(file.readline().strip())
+    file.close()
+    if not RadioButtonChecked:
+        if ComboBoxCurrentIndex == 0:
+            img = img.resize((1280, 720), Resampling.LANCZOS)
+        if ComboBoxCurrentIndex == 1:
+            img = img.resize((1920, 1080), Resampling.LANCZOS)
+        if ComboBoxCurrentIndex == 2:
+            img = img.resize((2560, 1440), Resampling.LANCZOS)
+        if ComboBoxCurrentIndex == 3:
+            img = img.resize((3840, 2160), Resampling.LANCZOS)
+        if ComboBoxCurrentIndex == 4:
+            img = img.resize((ImageWidth, ImageHeight), Resampling.LANCZOS)
+    img.save(SetupFile.SavedPathWithResize)
+
+
+def SaveMultipleImage(directory, dir_path,NumberOfPhotos):
+    # global trial
+    # global total
+    if not len(directory) == 0:
+        print("directory: " + directory)
+        print("dir_path: " + dir_path)
+        total1 = 0
+        for (dir_path, dir_names, file_names) in walk(dir_path):
+            for file in file_names:
+                print(file)
+                name, extension = os.path.splitext(file)
+                if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                    # trial.append(os.path.join(dir_path, file))
+                    AddLogo(os.path.join(dir_path, file))
+                    total1 = total1 + 1
+                    print(total1 / NumberOfPhotos)
+                    # ProgressBar.updateProgressBar(total1,
+                    #                               NumberOfPhotos)  # Number of photos might be being accessed
+                    # somewhere
+                    img1 = Image.open(SetupFile.SavedPathWithLogo)
+                    img1.save(directory + "/" + file)
+        # print(trial)
 
 
 class Ui_MainWindow(QObject):
@@ -119,6 +222,7 @@ class Ui_MainWindow(QObject):
         self.ConvertButton.setStyleSheet(SetupFile.Button)
         self.ConvertButton.setObjectName("ConvertButton")
         self.ConvertGrid.addWidget(self.ConvertButton)
+        self.ConvertGrid.addWidget(self.ConvertButton)
         self.MainGrid.addLayout(self.ConvertGrid, 2, 0, 1, 1)
 
         self.verticalLayout_3.addLayout(self.MainGrid)
@@ -158,17 +262,6 @@ class Ui_MainWindow(QObject):
         self.ImageSetting.setText(_translate("MainWindow", SetupFile.ImageSettingPageTitle))
 
 
-# save the new combined single image.
-def SaveNewImage():
-    if exists(SetupFile.SavedPathWithLogo):
-        savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
-                                                       "Output", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
-        if check:
-            img1 = Image.open(SetupFile.SavedPathWithLogo)
-            img1.save(savedFile)
-            os.startfile(savedFile)
-
-
 class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
@@ -180,112 +273,42 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.LogoSetting.triggered.connect(self.openLogoSetting)
         self.ImageSetting.triggered.connect(self.openImageSetting)
 
-    # add logo to the image.
-    def AddLogo(self, OriginalImage):
-        try:
-            LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
-            self.resizeImage(OriginalImage)
-            Background = Image.open(SetupFile.SavedPathWithResize)
-            BackgroundWidth = Background.size[0]
-            BackgroundHeight = Background.size[1]
-
-            if len(LogoPath.strip()) == 0:
-                print("not found")
-                self.openPopUpWindow("No logo found!")
-            else:
-                Logo = Image.open(LogoPath.strip())
-                # resize on the scale of the background
-                Logo = Logo.resize(
-                    (int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
-                LogoWidth = Logo.size[0]
-                LogoHeight = Logo.size[1]
-
-                maxWidth = BackgroundWidth - LogoWidth
-                maxHeight = BackgroundHeight - LogoHeight
-
-                # set position of logo on the scale of the background
-                if has_transparency(Logo):
-                    Background.paste(Logo,
-                                     (int((LogoPositionWidth / 100) * maxWidth),
-                                      int((LogoPositionHeight / 100) * maxHeight)),
-                                     Logo)
-                else:
-                    Background.paste(Logo,
-                                     (int((LogoPositionWidth / 100) * maxWidth),
-                                      int((LogoPositionHeight / 100) * maxHeight)))
-
-                # Save the image in the desired path.
-                Background.save(SetupFile.SavedPathWithLogo)
-        except:
-            print("can't add logo")
-
     def trial(self):
         print("trial")
 
-    # method to resize original image.
-    def resizeImage(self, originalImagePath):
-        img = Image.open(originalImagePath)
-        file = open(SetupFile.ImageSetupFilePath, "r")
-        RadioButtonFlagText = file.readline().strip()
-        if RadioButtonFlagText == "True":
-            RadioButtonChecked = True
-        else:
-            RadioButtonChecked = False
-        ComboBoxCurrentIndex = int(file.readline().strip())
-        ImageWidth = int(file.readline().strip())
-        ImageHeight = int(file.readline().strip())
-        file.close()
-        if not RadioButtonChecked:
-            if ComboBoxCurrentIndex == 0:
-                img = img.resize((1280, 720), Resampling.LANCZOS)
-            if ComboBoxCurrentIndex == 1:
-                img = img.resize((1920, 1080), Resampling.LANCZOS)
-            if ComboBoxCurrentIndex == 2:
-                img = img.resize((2560, 1440), Resampling.LANCZOS)
-            if ComboBoxCurrentIndex == 3:
-                img = img.resize((3840, 2160), Resampling.LANCZOS)
-            if ComboBoxCurrentIndex == 4:
-                img = img.resize((ImageWidth, ImageHeight), Resampling.LANCZOS)
-        img.save(SetupFile.SavedPathWithResize)
-
     # save multiple combined photos in a folder.
     def SaveMultipleImages(self):
+        global NumberOfPhotos
         print("Start of multiple save")
         directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         self.MainWindow = QtWidgets.QMainWindow()
         self.MainWindow = MyWindow()
 
-        self.ProgressBar = QtWidgets.QMainWindow()
-        self.ProgressBar = ProgressBar.MyWindow()
-        self.ProgressBar.show()
+        # self.ProgressBar = QtWidgets.QMainWindow()
+        # self.ProgressBar = ProgressBar.MyWindow()
+        # self.ProgressBar.show()
 
-        self.x(self.MainWindow, self.ProgressBar, directory, self.FilePath.text())
         # self.showProgressBar()
+        self.my_thread = QThread()
+        self.worker = Worker(self.MainWindow, directory, self.FilePath.text(), NumberOfPhotos)
 
-    @QtCore.pyqtSlot()
-    def x(self, MainWindow, ProgressBar, directory, FilePath):
-        self.loadthread = MultipleImages(MainWindow, directory, FilePath, ProgressBar)
-        self.loadthread.start()
+        # We're connecting things to the correct spots
+        self.worker.moveToThread(self.my_thread)
+        self.my_thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.my_thread.quit)
 
-    def SaveMultipleImage(self, directory, dir_path, ProgressBar):
-        # global trial
-        # global total
-        if not len(directory) == 0:
-            print("directory: " + directory)
-            print("dir_path: " + dir_path)
-            total = 0
-            for (dir_path, dir_names, file_names) in walk(dir_path):
-                for file in file_names:
-                    name, extension = os.path.splitext(file)
-                    if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-                        # trial.append(os.path.join(dir_path, file))
-                        self.AddLogo(os.path.join(dir_path, file))
-                        total = total + 1
-                        print(total/NumberOfPhotos)
-                        ProgressBar.updateProgressBar(total, NumberOfPhotos)#Number of photos might be being accessed somewhere
-                        img1 = Image.open(SetupFile.SavedPathWithLogo)
-                        img1.save(directory + "/" + file)
-            # print(trial)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.my_thread.finished.connect(self.my_thread.deleteLater)
+        # self.worker.progress.connect(self.reportProgress)
+
+        self.my_thread.start()
+
+    # @QtCore.pyqtSlot()
+    # def x(self, MainWindow, ProgressBar1, directory, FilePath, NumberOfPhotos1):
+    #     self.loadthread = MultipleImages(MainWindow, directory, FilePath, ProgressBar1, NumberOfPhotos1)
+    #     print(FilePath)
+    #     print(NumberOfPhotos)
+    #     self.loadthread.start()
 
     # check if it is to save a single image or multiple images.
     def Save(self):
@@ -351,7 +374,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                                                             "background-color: gray;\n "
                                                                                             "     }\n"
                                                                                             "")
-                self.AddLogo(self.FilePath.text())
+                AddLogo(self.FilePath.text())
                 self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
         if extension == "":
             print("Folder detected")
@@ -471,18 +494,20 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 #                     self.window.updateProgressBar(total + 1, NumberOfPhotos)
 #                     sem.release(1)
 
+class Worker(QObject):
+    finished = pyqtSignal()
 
-class MultipleImages(QThread):
-    def __init__(self, MainWindow, directory, FilePath, ProgressBar):
-        QThread.__init__(self)
+    def __init__(self, MainWindow, directory, FilePath, NumberOfPhotos):
+        super(Worker, self).__init__()
         self.MainWindow = MainWindow
-        self.ProgressBar = ProgressBar
         self.directory = directory
         self.FilePath = FilePath
+        # self.ProgressBar = ProgressBar
+        self.NumberOfPhotos = NumberOfPhotos
 
     def run(self):
         print("heyyyyyyyyyyyyyy" + self.directory)
-        self.MainWindow.SaveMultipleImage(self.directory, self.FilePath, self.ProgressBar)
+        SaveMultipleImage(self.directory, self.FilePath, NumberOfPhotos)
 
 
 if __name__ == "__main__":
