@@ -19,6 +19,7 @@ PhotoFiles = []
 trial = []
 NumberOfPhotos = 0
 total = 0
+sem = QSemaphore(1)
 
 
 # checks if required folder is present, if it isn't present, it makes the folder.
@@ -268,26 +269,24 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.loadthread.start()
 
     def SaveMultipleImage(self, directory, dir_path, ProgressBar):
-        global trial
-        global total
+        # global trial
+        # global total
         if not len(directory) == 0:
             print("directory: " + directory)
             print("dir_path: " + dir_path)
-            global PhotoFiles
-            PhotoFiles = []
             total = 0
             for (dir_path, dir_names, file_names) in walk(dir_path):
                 for file in file_names:
                     name, extension = os.path.splitext(file)
                     if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-                        trial.append(os.path.join(dir_path, file))
+                        # trial.append(os.path.join(dir_path, file))
                         self.AddLogo(os.path.join(dir_path, file))
                         total = total + 1
+                        print(total/NumberOfPhotos)
                         ProgressBar.updateProgressBar(total, NumberOfPhotos)
-                        print(total)
                         img1 = Image.open(SetupFile.SavedPathWithLogo)
                         img1.save(directory + "/" + file)
-            print(trial)
+            # print(trial)
 
     # check if it is to save a single image or multiple images.
     def Save(self):
@@ -475,7 +474,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 class MultipleImages(QThread):
-    def __init__(self, MainWindow, directory, FilePath,ProgressBar):
+    def __init__(self, MainWindow, directory, FilePath, ProgressBar):
         QThread.__init__(self)
         self.MainWindow = MainWindow
         self.ProgressBar = ProgressBar
