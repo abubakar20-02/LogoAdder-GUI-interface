@@ -5,7 +5,7 @@ from os.path import exists
 from PIL import Image
 from PIL.Image import Resampling
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QObject, Qt, QThread, QMutex
+from PyQt5.QtCore import QObject, Qt, QThread, QSemaphore
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QApplication
 
@@ -19,7 +19,6 @@ PhotoFiles = []
 trial = []
 NumberOfPhotos = 0
 total = 0
-mutex = QMutex()
 
 
 # checks if required folder is present, if it isn't present, it makes the folder.
@@ -253,18 +252,22 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def SaveMultipleImages(self):
         print("Start of multiple save")
         directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-        self.showProgressBar()
+        self.MainWindow = QtWidgets.QMainWindow()
+        self.MainWindow = MyWindow()
 
-        self.window = QtWidgets.QMainWindow()
-        self.window = MyWindow()
-        self.x(self.window, directory, self.FilePath.text())
+        self.ProgressBar = QtWidgets.QMainWindow()
+        self.ProgressBar = ProgressBar.MyWindow()
+        self.ProgressBar.show()
+
+        self.x(self.MainWindow, self.ProgressBar, directory, self.FilePath.text())
+        # self.showProgressBar()
 
     @QtCore.pyqtSlot()
-    def x(self, window, directory, FilePath):
-        self.loadthread = MultipleImages(window, directory, FilePath)
+    def x(self, MainWindow, ProgressBar, directory, FilePath):
+        self.loadthread = MultipleImages(MainWindow, directory, FilePath, ProgressBar)
         self.loadthread.start()
 
-    def SaveMultipleImage(self, directory, dir_path):
+    def SaveMultipleImage(self, directory, dir_path, ProgressBar):
         global trial
         global total
         if not len(directory) == 0:
@@ -279,12 +282,11 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
                         trial.append(os.path.join(dir_path, file))
                         self.AddLogo(os.path.join(dir_path, file))
-                        mutex.lock()
                         total = total + 1
+                        ProgressBar.updateProgressBar(total, NumberOfPhotos)
                         print(total)
                         img1 = Image.open(SetupFile.SavedPathWithLogo)
                         img1.save(directory + "/" + file)
-                        mutex.unlock()
             print(trial)
 
     # check if it is to save a single image or multiple images.
@@ -304,39 +306,39 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             self.openPopUpWindow("Logo not found!")
 
-    # Open the test model window
+    # Open the test model MainWindow
     def openLogoSetting(self):
         self.window = QtWidgets.QMainWindow()
         self.window = LogoSetting.MyWindow()
         self.window.show()
         self.window.pushButton.clicked.connect(self.update)
 
-    # Open the test model window
+    # Open the test model MainWindow
     def openImageSetting(self):
         self.window = QtWidgets.QMainWindow()
         self.window = ImageSettingPage.MyWindow()
         self.window.show()
         self.window.pushButton.clicked.connect(self.update)
 
-    # Open the pop-up window.
+    # Open the pop-up MainWindow.
     def openPopUpWindow(self, message):
         self.window = QtWidgets.QMainWindow()
         self.window = popupmsg.MyWindow()
         self.window.setMessage(message)
         self.window.show()
 
-    # Show the progress bar.
-    def showProgressBar(self):
-        print("hi")
-        self.window = QtWidgets.QMainWindow()
-        self.window = ProgressBar.MyWindow()
-        self.window.show()
-        self.ContinuouslyUpdateProgressBar(self.window)
+    # # Show the progress bar.
+    # def showProgressBar(self):
+    #     print("hi")
+    #     self.window = QtWidgets.QMainWindow()
+    #     self.window = ProgressBar.MyWindow()
+    #     self.window.show()
+    #     # self.ContinuouslyUpdateProgressBar(self.window)
 
-    @QtCore.pyqtSlot()
-    def ContinuouslyUpdateProgressBar(self, window):
-        self.loadthread = UpdateProgressBar(window)
-        self.loadthread.start()
+    # @QtCore.pyqtSlot()
+    # def ContinuouslyUpdateProgressBar(self, window):
+    #     self.loadthread = UpdateProgressBar(window)
+    #     self.loadthread.start()
 
     # update the main screen with original image and preview of the combined image.
     def update(self):
@@ -433,7 +435,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except:
             None
 
-    # when user closes the main window, remove temp files and close all other sub windows.
+    # when user closes the main MainWindow, remove temp files and close all other sub windows.
     def closeEvent(self, event):
         if exists(SetupFile.SavedPathWithLogo):
             os.remove(SetupFile.SavedPathWithLogo)
@@ -443,40 +445,46 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             window.close()
 
 
-class UpdateProgressBar(QThread):
-    def __init__(self, window):
-        QThread.__init__(self)
-        self.window = window
+# class UpdateProgressBar(QThread):
+#     def __init__(self, window):
+#         QThread.__init__(self)
+#         self.window = window
+#
+#     def run(self):
+#         while True:
+#             print(str(sem.tryAcquire(1)))
+#             if sem.tryacquire(1):
+#                 global NumberOfPhotos
+#                 global total
+#                 print(str(sem.tryAcquire(1)))
+#                 sem.acquire(1)
+#                 print("woak")
+#                 # if not (total == NumberOfPhotos):
+#                 #     print((total/NumberOfPhotos)*100)
+#                 #     self.MainWindow.updateProgressBar(total, NumberOfPhotos)
+#                 if total == NumberOfPhotos:
+#                     print("break")
+#                     sem.release(1)
+#                     break
+#                 else:
+#                     print(((total + 1) / NumberOfPhotos) * 100)
+#                     print("total: " + str(total + 1))
+#                     print("Photos: " + str(NumberOfPhotos))
+#                     self.window.updateProgressBar(total + 1, NumberOfPhotos)
+#                     sem.release(1)
 
-    def run(self):
-        while True:
-            mutex.lock()
-            global NumberOfPhotos
-            global total
-            # if not (total == NumberOfPhotos):
-            #     print((total/NumberOfPhotos)*100)
-            #     self.window.updateProgressBar(total, NumberOfPhotos)
-            if total == NumberOfPhotos:
-                print("break")
-                mutex.unlock()
-                break
-            else:
-                print((total / NumberOfPhotos) * 100)
-                print("total: "+str(total))
-                print("Photos: "+str(NumberOfPhotos))
-                self.window.updateProgressBar(total, NumberOfPhotos)
-                mutex.unlock()
 
 class MultipleImages(QThread):
-    def __init__(self, window, directory, FilePath):
+    def __init__(self, MainWindow, directory, FilePath,ProgressBar):
         QThread.__init__(self)
-        self.window = window
+        self.MainWindow = MainWindow
+        self.ProgressBar = ProgressBar
         self.directory = directory
         self.FilePath = FilePath
 
     def run(self):
         print("heyyyyyyyyyyyyyy" + self.directory)
-        self.window.SaveMultipleImage(self.directory, self.FilePath)
+        self.MainWindow.SaveMultipleImage(self.directory, self.FilePath, self.ProgressBar)
 
 
 if __name__ == "__main__":
