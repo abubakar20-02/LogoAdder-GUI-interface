@@ -16,7 +16,7 @@ class Ui_Form(QObject):
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.progressBar = QtWidgets.QProgressBar(Form)
         self.progressBar.setMinimumSize(QtCore.QSize(300, 0))
-        self.progressBar.setProperty("value", 24)
+        self.progressBar.setProperty("value", 0)
         self.progressBar.setObjectName("progressBar")
         self.horizontalLayout_2.addWidget(self.progressBar)
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)

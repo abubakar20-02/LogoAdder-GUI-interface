@@ -1,8 +1,6 @@
 import os
-import threading
 from os import walk
 from os.path import exists
-from threading import *
 
 from PIL import Image
 from PIL.Image import Resampling
@@ -21,7 +19,6 @@ PhotoFiles = []
 trial = []
 NumberOfPhotos = 0
 total = 0
-event = Event()
 mutex = QMutex()
 
 
@@ -261,8 +258,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window = QtWidgets.QMainWindow()
         self.window = MyWindow()
         self.x(self.window, directory, self.FilePath.text())
-        # SaveMultipleImage = threading.Thread(target=self.SaveMultipleImage, args=(directory,))
-        # SaveMultipleImage.start()
 
     @QtCore.pyqtSlot()
     def x(self, window, directory, FilePath):
@@ -455,13 +450,22 @@ class UpdateProgressBar(QThread):
 
     def run(self):
         while True:
+            mutex.lock()
             global NumberOfPhotos
             global total
-            if not (total == NumberOfPhotos + 1):
-                self.window.updateProgressBar(total, NumberOfPhotos)
+            # if not (total == NumberOfPhotos):
+            #     print((total/NumberOfPhotos)*100)
+            #     self.window.updateProgressBar(total, NumberOfPhotos)
             if total == NumberOfPhotos:
+                print("break")
+                mutex.unlock()
                 break
-
+            else:
+                print((total / NumberOfPhotos) * 100)
+                print("total: "+str(total))
+                print("Photos: "+str(NumberOfPhotos))
+                self.window.updateProgressBar(total, NumberOfPhotos)
+                mutex.unlock()
 
 class MultipleImages(QThread):
     def __init__(self, window, directory, FilePath):
@@ -473,7 +477,6 @@ class MultipleImages(QThread):
     def run(self):
         print("heyyyyyyyyyyyyyy" + self.directory)
         self.window.SaveMultipleImage(self.directory, self.FilePath)
-        self.window.trial()
 
 
 if __name__ == "__main__":
