@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject
 from PyQt5.QtGui import QIcon
 
+import ConversionCompletePopUp
 import SetupFile
 
 
@@ -48,6 +49,8 @@ class Ui_Form(QObject):
 
 
 class MyWindow(QtWidgets.QWidget, Ui_Form):
+    directory = ""
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -62,7 +65,17 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
     def updateProgressBar(self, current, Max):
         self.progressBar.setValue((current / Max) * 100)
         if self.progressBar.value() == 100:
+            self.openConversionCompletePopUp()
             self.close()
+
+    def openConversionCompletePopUp(self):
+        self.window = QtWidgets.QMainWindow()
+        self.window = ConversionCompletePopUp.MyWindow()
+        self.window.setDirectory(self.directory)
+        self.window.show()
+
+    def setDirectory(self, directory):
+        self.directory = directory
 
 
 if __name__ == "__main__":

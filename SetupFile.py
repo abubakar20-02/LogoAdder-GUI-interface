@@ -96,3 +96,5 @@ ImageSetupFilePath = ProgramFilesFolder + "/ImageSetup.txt"
 MainIcon = ResourceFolder + "/Logo.png"
 
 WarningImage = "QLabel{image: url(Resources/Warning.png);}"
+
+CompleteImage = "QLabel{image: url(Resources/Complete.png);}"

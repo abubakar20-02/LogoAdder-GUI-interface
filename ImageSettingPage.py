@@ -93,7 +93,7 @@ class Ui_Form(QObject):
         self.horizontalLayout_2.addItem(spacerItem4)
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setStyleSheet(SetupFile.Button)
-        self.pushButton.setObjectName("pushButton")
+        self.pushButton.setObjectName("CloseButton")
         self.horizontalLayout_2.addWidget(self.pushButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
@@ -170,6 +170,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         print(self.comboBox.currentIndex())
         print(self.ImageWidth.value())
         print(self.ImageHeight.value())
+        self.close()
 
     def checkRadio(self):
         print(self.radioButton.isChecked())

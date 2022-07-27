@@ -264,6 +264,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         print("Start of multiple save")
         directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         if not len(directory) == 0:
+            ProgressBar.setDirectory(directory)
             self.ConvertButton.setEnabled(False)
             ProgressBar.show()
 
@@ -274,7 +275,8 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # We're connecting things to the correct spots
             self.worker.moveToThread(self.my_thread)  # move worker to thread.
             # Note: Ui elements should only be updated via the main thread.
-            self.worker.progressbarParameters.connect(ProgressBar.updateProgressBar)  # using signal and slots, update ui elements
+            self.worker.progressbarParameters.connect(ProgressBar.updateProgressBar)  # using signal and slots,
+            # update ui elements
             self.my_thread.started.connect(self.worker.run)
             self.worker.finished.connect(self.my_thread.quit)  # safely close the thread.
             self.worker.finished.connect(self.worker.deleteLater)
@@ -314,14 +316,18 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window = QtWidgets.QMainWindow()
         self.window = LogoSetting.MyWindow()
         self.window.show()
-        self.window.pushButton.clicked.connect(self.update)
+        self.window.pushButton.clicked.connect(self.CheckAndUpdate)
 
     # Open the test model MainWindow
     def openImageSetting(self):
         self.window = QtWidgets.QMainWindow()
         self.window = ImageSettingPage.MyWindow()
         self.window.show()
-        self.window.pushButton.clicked.connect(self.update)
+        self.window.pushButton.clicked.connect(self.CheckAndUpdate)
+
+    def CheckAndUpdate(self):
+        if not len(self.FilePath.text()) == 0:
+            self.update()
 
     # Open the pop-up MainWindow.
     def openPopUpWindow(self, message):

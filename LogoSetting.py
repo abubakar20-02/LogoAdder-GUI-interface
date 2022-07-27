@@ -197,7 +197,7 @@ class Ui_Form(QObject):
 
         self.pushButton = QtWidgets.QPushButton(Form)
         self.pushButton.setStyleSheet(SetupFile.Button)
-        self.pushButton.setObjectName("pushButton")
+        self.pushButton.setObjectName("CloseButton")
         self.horizontalLayout_2.addWidget(self.pushButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
