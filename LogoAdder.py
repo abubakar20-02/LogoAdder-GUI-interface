@@ -1,5 +1,6 @@
 import os
 import time
+from functools import partial
 from os import walk
 from os.path import exists
 
@@ -121,30 +122,6 @@ def resizeImage(originalImagePath):
         if ComboBoxCurrentIndex == 4:
             img = img.resize((ImageWidth, ImageHeight), Resampling.LANCZOS)
     img.save(SetupFile.SavedPathWithResize)
-
-
-def SaveMultipleImage(directory, dir_path,NumberOfPhotos):
-    # global trial
-    # global total
-    if not len(directory) == 0:
-        print("directory: " + directory)
-        print("dir_path: " + dir_path)
-        total1 = 0
-        for (dir_path, dir_names, file_names) in walk(dir_path):
-            for file in file_names:
-                print(file)
-                name, extension = os.path.splitext(file)
-                if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-                    # trial.append(os.path.join(dir_path, file))
-                    AddLogo(os.path.join(dir_path, file))
-                    total1 = total1 + 1
-                    print(total1 / NumberOfPhotos)
-                    # ProgressBar.updateProgressBar(total1,
-                    #                               NumberOfPhotos)  # Number of photos might be being accessed
-                    # somewhere
-                    img1 = Image.open(SetupFile.SavedPathWithLogo)
-                    img1.save(directory + "/" + file)
-        # print(trial)
 
 
 class Ui_MainWindow(QObject):
@@ -284,9 +261,10 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.MainWindow = QtWidgets.QMainWindow()
         self.MainWindow = MyWindow()
 
-        # self.ProgressBar = QtWidgets.QMainWindow()
-        # self.ProgressBar = ProgressBar.MyWindow()
-        # self.ProgressBar.show()
+        self.ProgressBar = QtWidgets.QMainWindow()
+        self.ProgressBar = ProgressBar.MyWindow()
+        self.ProgressBar.updateProgressBar(1,100)
+        self.ProgressBar.show()
 
         # self.showProgressBar()
         self.my_thread = QThread()
@@ -294,11 +272,12 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # We're connecting things to the correct spots
         self.worker.moveToThread(self.my_thread)
+        self.worker.progressbar.connect(self.ProgressBar.updateProgressBar)
         self.my_thread.started.connect(self.worker.run)
-        self.worker.finished.connect(self.my_thread.quit)
-
-        self.worker.finished.connect(self.worker.deleteLater)
-        self.my_thread.finished.connect(self.my_thread.deleteLater)
+        # self.worker.finished.connect(self.my_thread.quit)
+        #
+        # self.worker.finished.connect(self.worker.deleteLater)
+        # self.my_thread.finished.connect(self.my_thread.deleteLater)
         # self.worker.progress.connect(self.reportProgress)
 
         self.my_thread.start()
@@ -495,19 +474,31 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 #                     sem.release(1)
 
 class Worker(QObject):
-    finished = pyqtSignal()
+    progressbar = pyqtSignal(int, int, name="ProgressBarParameters")
 
     def __init__(self, MainWindow, directory, FilePath, NumberOfPhotos):
         super(Worker, self).__init__()
         self.MainWindow = MainWindow
         self.directory = directory
         self.FilePath = FilePath
-        # self.ProgressBar = ProgressBar
         self.NumberOfPhotos = NumberOfPhotos
 
     def run(self):
         print("heyyyyyyyyyyyyyy" + self.directory)
-        SaveMultipleImage(self.directory, self.FilePath, NumberOfPhotos)
+        print("directory: " + self.directory)
+        print("dir_path: " + self.FilePath)
+        total1 = 0
+        for (dir_path, dir_names, file_names) in walk(self.FilePath):
+            for file in file_names:
+                print(file)
+                name, extension = os.path.splitext(file)
+                if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                    # trial.append(os.path.join(dir_path, file))
+                    AddLogo(os.path.join(dir_path, file))
+                    total1 = total1 + 1
+                    self.progressbar.emit(total1, NumberOfPhotos)
+                    img1 = Image.open(SetupFile.SavedPathWithLogo)
+                    img1.save(self.directory + "/" + file)
 
 
 if __name__ == "__main__":
