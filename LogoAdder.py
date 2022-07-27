@@ -252,7 +252,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         ProgressBar.StopButton.clicked.connect(self.Close)
         ProgressBar.progressBar.setValue(0)
         global NumberOfPhotos
-        print("Start of multiple save")
         directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         if not len(directory) == 0:
             ProgressBar.setDirectory(directory)
@@ -295,7 +294,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             global NumberOfPhotos
             if not NumberOfPhotos == 0:
-                print("not empty")
                 self.SaveMultipleImages()
             else:
                 self.openPopUpWindow("No images found in the folder!")
@@ -348,7 +346,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 AddLogo(self.FilePath.text())
                 self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
         if extension == "":
-            print("Folder detected")
             global NumberOfPhotos
             dir_path = self.FilePath.text()
             res = []
@@ -403,15 +400,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.PreviewImage.setText("")
                     self.FilePath.setText("")
                     self.openPopUpWindow("Please drop a folder or an image file")
-
-            global trial
-            dir_path = self.FilePath.text()
-            for (dir_path, dir_names, file_names) in walk(dir_path):
-                for file in file_names:
-                    name, extension = os.path.splitext(file)
-                    if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-                        trial.append(os.path.join(dir_path, file))
-            print(trial)
         except:
             None
 
@@ -439,8 +427,6 @@ class Worker(QObject):
         sem.acquire(1)
         global Close
         Close = False
-        print("directory: " + self.directory)
-        print("dir_path: " + self.FilePath)
         CurrentNumberOfPhotos = 0
         for (dir_path, dir_names, file_names) in walk(self.FilePath):
             for file in file_names:
@@ -448,7 +434,6 @@ class Worker(QObject):
                     break
                 else:
                     sem.release(1)
-                    print(file)
                     name, extension = os.path.splitext(file)
                     if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
                         AddLogo(os.path.join(dir_path, file))

@@ -185,14 +185,12 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
 
     # Apply changes by saving the changes to the file, which will later be used by main program.
     def ApplyChanges(self):
-        print("apply changes")
         ImageSettingWriteToFile(self.radioButton.isChecked(), self.comboBox.currentIndex(), self.ImageWidth.value(),
                                 self.ImageHeight.value())
         self.close()
 
     # Method to disable and enable appropriate buttons when the radio is checked or unchecked.
     def checkRadio(self):
-        print(self.radioButton.isChecked())
         if self.radioButton.isChecked():
             self.EnableButtons(False)
         else:
@@ -200,7 +198,6 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.checkCombo()
 
     def checkCombo(self):
-        print(self.comboBox.currentText())
         if (not self.radioButton.isChecked()) and self.comboBox.currentIndex() == 4:
             self.EnableImageSize(True)
         else:

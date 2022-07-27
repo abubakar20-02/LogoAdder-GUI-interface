@@ -300,7 +300,6 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         path = filename[0]
         if not len(path) == 0:
             self.FilePath.setText(path)
-            print(self.FilePath.text())
             self.PreviewImage.setStyleSheet(
                 "QLabel{border: 1px solid;image: url(" + self.FilePath.text() + ");background-color: "
                                                                                 "white;}")
