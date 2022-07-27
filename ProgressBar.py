@@ -50,6 +50,8 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
 
     def updateProgressBar(self, current, Max):
         self.progressBar.setValue((current / Max)*100)
+        if self.progressBar.value() == 100:
+            self.close()
 
 
 if __name__ == "__main__":

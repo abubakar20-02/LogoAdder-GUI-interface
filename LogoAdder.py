@@ -199,7 +199,6 @@ class Ui_MainWindow(QObject):
         self.ConvertButton.setStyleSheet(SetupFile.Button)
         self.ConvertButton.setObjectName("ConvertButton")
         self.ConvertGrid.addWidget(self.ConvertButton)
-        self.ConvertGrid.addWidget(self.ConvertButton)
         self.MainGrid.addLayout(self.ConvertGrid, 2, 0, 1, 1)
 
         self.verticalLayout_3.addLayout(self.MainGrid)
@@ -255,39 +254,36 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # save multiple combined photos in a folder.
     def SaveMultipleImages(self):
+        ProgressBar=self.getProgressBar()
+        ProgressBar.progressBar.setValue(0)
         global NumberOfPhotos
         print("Start of multiple save")
         directory = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-        self.MainWindow = QtWidgets.QMainWindow()
-        self.MainWindow = MyWindow()
+        if not len(directory) == 0:
+            ProgressBar.show()
 
-        self.ProgressBar = QtWidgets.QMainWindow()
-        self.ProgressBar = ProgressBar.MyWindow()
-        self.ProgressBar.updateProgressBar(1,100)
-        self.ProgressBar.show()
+            # self.showProgressBar()
+            self.my_thread = QThread()
+            self.worker = Worker(directory, self.FilePath.text(), NumberOfPhotos)
 
-        # self.showProgressBar()
-        self.my_thread = QThread()
-        self.worker = Worker(self.MainWindow, directory, self.FilePath.text(), NumberOfPhotos)
+            # We're connecting things to the correct spots
+            self.worker.moveToThread(self.my_thread)
+            self.worker.progressbar.connect(ProgressBar.updateProgressBar)
+            self.my_thread.started.connect(self.worker.run)
+            self.worker.finished.connect(self.my_thread.quit)
+            # #
+            self.worker.finished.connect(self.worker.deleteLater)
+            self.my_thread.finished.connect(self.my_thread.deleteLater)
+            # self.worker.progress.connect(self.reportProgress)
 
-        # We're connecting things to the correct spots
-        self.worker.moveToThread(self.my_thread)
-        self.worker.progressbar.connect(self.ProgressBar.updateProgressBar)
-        self.my_thread.started.connect(self.worker.run)
-        # self.worker.finished.connect(self.my_thread.quit)
-        #
-        # self.worker.finished.connect(self.worker.deleteLater)
-        # self.my_thread.finished.connect(self.my_thread.deleteLater)
-        # self.worker.progress.connect(self.reportProgress)
+            self.my_thread.start()
 
-        self.my_thread.start()
-
-    # @QtCore.pyqtSlot()
-    # def x(self, MainWindow, ProgressBar1, directory, FilePath, NumberOfPhotos1):
-    #     self.loadthread = MultipleImages(MainWindow, directory, FilePath, ProgressBar1, NumberOfPhotos1)
-    #     print(FilePath)
-    #     print(NumberOfPhotos)
-    #     self.loadthread.start()
+        # @QtCore.pyqtSlot()
+        # def x(self, MainWindow, ProgressBar1, directory, FilePath, NumberOfPhotos1):
+        #     self.loadthread = MultipleImages(MainWindow, directory, FilePath, ProgressBar1, NumberOfPhotos1)
+        #     print(FilePath)
+        #     print(NumberOfPhotos)
+        #     self.loadthread.start()
 
     # check if it is to save a single image or multiple images.
     def Save(self):
@@ -326,6 +322,11 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window = popupmsg.MyWindow()
         self.window.setMessage(message)
         self.window.show()
+
+    def getProgressBar(self):
+        self.ProgressBar = QtWidgets.QMainWindow()
+        self.ProgressBar = ProgressBar.MyWindow()
+        return self.ProgressBar
 
     # # Show the progress bar.
     # def showProgressBar(self):
@@ -475,10 +476,10 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 class Worker(QObject):
     progressbar = pyqtSignal(int, int, name="ProgressBarParameters")
+    finished = pyqtSignal()
 
-    def __init__(self, MainWindow, directory, FilePath, NumberOfPhotos):
+    def __init__(self, directory, FilePath, NumberOfPhotos):
         super(Worker, self).__init__()
-        self.MainWindow = MainWindow
         self.directory = directory
         self.FilePath = FilePath
         self.NumberOfPhotos = NumberOfPhotos
@@ -499,6 +500,7 @@ class Worker(QObject):
                     self.progressbar.emit(total1, NumberOfPhotos)
                     img1 = Image.open(SetupFile.SavedPathWithLogo)
                     img1.save(self.directory + "/" + file)
+        self.finished.emit()
 
 
 if __name__ == "__main__":
