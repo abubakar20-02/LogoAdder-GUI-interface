@@ -129,6 +129,7 @@ class Ui_MainWindow(QObject):
         FolderPresentEnsured(SetupFile.ResourceFolder)
         FolderPresentEnsured(SetupFile.OutputFolder)
         FolderPresentEnsured(SetupFile.LogoFolder)
+        ImageSettingPage.FilePresentEnsured()
 
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(690, 542)
@@ -292,23 +293,18 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Close = True
         sem.release()
 
-
     # check if it is to save a single image or multiple images.
     def Save(self):
         name, extension = os.path.splitext(self.FilePath.text())
-        LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
-        if not len(LogoPath.strip()) == 0:
-            if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-                SaveNewImage()
-            else:
-                global NumberOfPhotos
-                if not NumberOfPhotos == 0:
-                    print("not empty")
-                    self.SaveMultipleImages()
-                else:
-                    self.openPopUpWindow("No images found in the folder!")
+        if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+            SaveNewImage()
         else:
-            self.openPopUpWindow("Logo not found!")
+            global NumberOfPhotos
+            if not NumberOfPhotos == 0:
+                print("not empty")
+                self.SaveMultipleImages()
+            else:
+                self.openPopUpWindow("No images found in the folder!")
 
     # Open the test model MainWindow
     def openLogoSetting(self):

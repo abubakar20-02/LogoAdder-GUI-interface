@@ -121,7 +121,7 @@ class Ui_Form(QObject):
 
 def FilePresentEnsured():
     if not exists(SetupFile.ImageSetupFilePath):
-        method_name(True, 0, 0, 0)
+        method_name(True, 0, 100, 100)
 
 
 def method_name(RadioButton, ComboBoxIndex, ImageWidth, ImageHeight):
