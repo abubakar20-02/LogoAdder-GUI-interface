@@ -22,7 +22,7 @@ Pyqt5 supports Python 3.5- 3.9
 
 ## Adding files
 <p align="center">
- <img src="http://s.4cdn.org/image/title/105.gif](https://user-images.githubusercontent.com/93462990/181372664-2514f640-5e88-41ae-a7fe-376fedb06a64.gif)">
+ <img src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/Import%20images.gif">
 </p>
 ![DragAndDropLogo](https://user-images.githubusercontent.com/93462990/181371207-af990459-a832-4771-b741-e17a2f29e308.gif)
 ![DragAndDropFile](https://user-images.githubusercontent.com/93462990/181372194-afa168d9-3bd8-4b48-ba43-be8e26171d97.gif)
