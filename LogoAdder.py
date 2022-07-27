@@ -256,7 +256,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     # save multiple combined photos in a folder.
     def SaveMultipleImages(self):
         ProgressBar = self.getProgressBar()
-        ProgressBar.CancelButton.clicked.connect(self.Close)
+        ProgressBar.StopButton.clicked.connect(self.Close)
         ProgressBar.progressBar.setValue(0)
         global NumberOfPhotos
         print("Start of multiple save")
@@ -291,6 +291,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         global Close
         Close = True
         sem.release()
+
 
     # check if it is to save a single image or multiple images.
     def Save(self):

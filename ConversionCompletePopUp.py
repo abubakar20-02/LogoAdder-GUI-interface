@@ -2,6 +2,7 @@ import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QObject
+from PyQt5.QtGui import QIcon
 
 import SetupFile
 
@@ -52,13 +53,13 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+        self.setWindowIcon(QIcon(SetupFile.MainIcon))
         self.setWindowTitle("Conversion complete")
         self.setStyleSheet(SetupFile.MainBackground)
         self.Image.setStyleSheet(SetupFile.CompleteImage)
         self.CloseButton.setStyleSheet(SetupFile.Button)
         self.OpenFolderButton.setStyleSheet(SetupFile.Button)
 
-        self.Text.setText("Conversion complete!")
         self.CloseButton.clicked.connect(self.close)
         self.OpenFolderButton.clicked.connect(self.openDirectory)
 
@@ -68,6 +69,9 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
     def openDirectory(self):
         self.close()
         os.startfile(self.directory)
+
+    def setMessage(self, Message):
+        self.Text.setText(Message)
 
 
 if __name__ == "__main__":

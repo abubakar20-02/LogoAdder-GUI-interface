@@ -9,7 +9,7 @@ import SetupFile
 class Ui_Form(QObject):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.setFixedSize(363, 74)
+        Form.setFixedSize(363, 80)
         Form.setWindowTitle("Converting...")
         self.setWindowModality(QtCore.Qt.ApplicationModal)
         Form.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
@@ -38,10 +38,10 @@ class Ui_Form(QObject):
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
 
-        self.CancelButton = QtWidgets.QPushButton(Form)
-        self.CancelButton.setObjectName("CancelButton")
-        self.CancelButton.setText("Cancel")
-        self.horizontalLayout.addWidget(self.CancelButton)
+        self.StopButton = QtWidgets.QPushButton(Form)
+        self.StopButton.setObjectName("StopButton")
+        self.StopButton.setText("Stop")
+        self.horizontalLayout.addWidget(self.StopButton)
         self.verticalLayout_3.addLayout(self.horizontalLayout)
         self.verticalLayout_4.addLayout(self.verticalLayout_3)
 
@@ -55,12 +55,9 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         super().__init__()
         self.setupUi(self)
         self.setStyleSheet(SetupFile.MainBackground)
-        self.CancelButton.setStyleSheet(SetupFile.Button)
-        self.CancelButton.clicked.connect(self.Close)
+        self.StopButton.setStyleSheet(SetupFile.Button)
+        self.StopButton.clicked.connect(self.ClosedinBetween)
 
-    def Close(self):
-        self.close()
-        self.progressBar.setValue(0)
 
     def updateProgressBar(self, current, Max):
         self.progressBar.setValue((current / Max) * 100)
@@ -71,6 +68,16 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
     def openConversionCompletePopUp(self):
         self.window = QtWidgets.QMainWindow()
         self.window = ConversionCompletePopUp.MyWindow()
+        self.window.setMessage("Conversion complete!")
+        self.window.setDirectory(self.directory)
+        self.window.show()
+
+    def ClosedinBetween(self):
+        self.close()
+        self.window = QtWidgets.QMainWindow()
+        self.window = ConversionCompletePopUp.MyWindow()
+        self.window.setWindowTitle("Conversion stopped")
+        self.window.setMessage("Conversion stopped at the given file!")
         self.window.setDirectory(self.directory)
         self.window.show()
 
