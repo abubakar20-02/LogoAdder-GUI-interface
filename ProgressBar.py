@@ -47,6 +47,11 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.setupUi(self)
         self.setStyleSheet(SetupFile.MainBackground)
         self.CancelButton.setStyleSheet(SetupFile.Button)
+        self.CancelButton.clicked.connect(self.Close)
+
+    def Close(self):
+        self.close()
+        self.progressBar.setValue(0)
 
     def updateProgressBar(self, current, Max):
         self.progressBar.setValue((current / Max)*100)

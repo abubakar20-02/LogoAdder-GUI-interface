@@ -5,7 +5,7 @@ from os.path import exists
 from PIL import Image
 from PIL.Image import Resampling
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QObject, Qt, QThread, pyqtSignal
+from PyQt5.QtCore import QObject, Qt, QThread, pyqtSignal, QSemaphore
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QApplication
 
@@ -19,6 +19,8 @@ PhotoFiles = []
 trial = []
 NumberOfPhotos = 0
 total = 0
+Close = False
+sem = QSemaphore(1)
 
 
 # checks if required folder is present, if it isn't present, it makes the folder.
@@ -252,7 +254,8 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # save multiple combined photos in a folder.
     def SaveMultipleImages(self):
-        ProgressBar=self.getProgressBar()
+        ProgressBar = self.getProgressBar()
+        ProgressBar.CancelButton.clicked.connect(self.Close)
         ProgressBar.progressBar.setValue(0)
         global NumberOfPhotos
         print("Start of multiple save")
@@ -269,12 +272,17 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.worker.progressbar.connect(ProgressBar.updateProgressBar)
             self.my_thread.started.connect(self.worker.run)
             self.worker.finished.connect(self.my_thread.quit)
-            # #
             self.worker.finished.connect(self.worker.deleteLater)
             self.my_thread.finished.connect(self.my_thread.deleteLater)
             # self.worker.progress.connect(self.reportProgress)
 
             self.my_thread.start()
+
+    def Close(self):
+        sem.acquire(1)
+        global Close
+        Close = True
+        sem.release()
 
         # @QtCore.pyqtSlot()
         # def x(self, MainWindow, ProgressBar1, directory, FilePath, NumberOfPhotos1):
@@ -483,21 +491,29 @@ class Worker(QObject):
         self.NumberOfPhotos = NumberOfPhotos
 
     def run(self):
+        sem.acquire(1)
+        global Close
+        Close = False
         print("heyyyyyyyyyyyyyy" + self.directory)
         print("directory: " + self.directory)
         print("dir_path: " + self.FilePath)
         total1 = 0
         for (dir_path, dir_names, file_names) in walk(self.FilePath):
             for file in file_names:
-                print(file)
-                name, extension = os.path.splitext(file)
-                if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-                    # trial.append(os.path.join(dir_path, file))
-                    AddLogo(os.path.join(dir_path, file))
-                    total1 = total1 + 1
-                    self.progressbar.emit(total1, NumberOfPhotos)
-                    img1 = Image.open(SetupFile.SavedPathWithLogo)
-                    img1.save(self.directory + "/" + file)
+                if not Close:
+                    sem.release(1)
+                    print(file)
+                    name, extension = os.path.splitext(file)
+                    if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                        # trial.append(os.path.join(dir_path, file))
+                        AddLogo(os.path.join(dir_path, file))
+                        total1 = total1 + 1
+                        self.progressbar.emit(total1, NumberOfPhotos)
+                        img1 = Image.open(SetupFile.SavedPathWithLogo)
+                        img1.save(self.directory + "/" + file)
+                    else:
+                        print("closedd")
+                        break
         self.finished.emit()
 
 
