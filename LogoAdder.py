@@ -57,41 +57,36 @@ def SaveNewImage():
             os.startfile(savedFile)
 
 
-# add logo to the image.
+# add logo to the image if logo is present, otherwise just resize the image.
 def AddLogo(OriginalImage):
     LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
     resizeImage(OriginalImage)
     Background = Image.open(SetupFile.SavedPathWithResize)
     BackgroundWidth = Background.size[0]
     BackgroundHeight = Background.size[1]
-    if len(LogoPath.strip()) == 0:
-        print("not found")
-        # self.openPopUpWindow("No logo found!")
-    else:
-        try:
-            Logo = Image.open(LogoPath.strip())
-            # resize on the scale of the background
-            Logo = Logo.resize(
-                (int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
-            LogoWidth = Logo.size[0]
-            LogoHeight = Logo.size[1]
+    try:
+        Logo = Image.open(LogoPath.strip())
+        # resize on the scale of the background
+        Logo = Logo.resize(
+            (int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
+        LogoWidth = Logo.size[0]
+        LogoHeight = Logo.size[1]
 
-            maxWidth = BackgroundWidth - LogoWidth
-            maxHeight = BackgroundHeight - LogoHeight
+        maxWidth = BackgroundWidth - LogoWidth
+        maxHeight = BackgroundHeight - LogoHeight
 
-            # set position of logo on the scale of the background
-            if has_transparency(Logo):
-                Background.paste(Logo,
-                                 (int((LogoPositionWidth / 100) * maxWidth),
-                                  int((LogoPositionHeight / 100) * maxHeight)),
-                                 Logo)
-            else:
-                Background.paste(Logo,
-                                 (int((LogoPositionWidth / 100) * maxWidth),
-                                  int((LogoPositionHeight / 100) * maxHeight)))
-        except:
-            print("can't add logo")
-    # Save the image in the desired path.
+        # set position of logo on the scale of the background
+        if has_transparency(Logo):
+            Background.paste(Logo,
+                             (int((LogoPositionWidth / 100) * maxWidth),
+                              int((LogoPositionHeight / 100) * maxHeight)),
+                             Logo)
+        else:
+            Background.paste(Logo,
+                             (int((LogoPositionWidth / 100) * maxWidth),
+                              int((LogoPositionHeight / 100) * maxHeight)))
+    except:
+        None
     Background.save(SetupFile.SavedPathWithLogo)
 
 
@@ -124,7 +119,7 @@ def resizeImage(originalImagePath):
 
 class Ui_MainWindow(QObject):
     def setupUi(self, MainWindow):
-        # Folder check
+        # Folder and file checks.
         FolderPresentEnsured(SetupFile.ProgramFilesFolder)
         FolderPresentEnsured(SetupFile.ResourceFolder)
         FolderPresentEnsured(SetupFile.OutputFolder)
@@ -251,9 +246,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.LogoSetting.triggered.connect(self.openLogoSetting)
         self.ImageSetting.triggered.connect(self.openImageSetting)
 
-    def trial(self):
-        print("trial")
-
     # save multiple combined photos in a folder.
     def SaveMultipleImages(self):
         ProgressBar = self.getProgressBar()
@@ -283,10 +275,12 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             self.my_thread.start()
 
+    # Once the thread finishes, safely close the thread and enable convert button for use again.
     def finishThread(self):
         self.ConvertButton.setEnabled(True)
         self.my_thread.deleteLater()
 
+    # Use of semaphore so that there is no race condition.
     def Close(self):
         sem.acquire(1)
         global Close
@@ -320,6 +314,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window.show()
         self.window.pushButton.clicked.connect(self.CheckAndUpdate)
 
+    # Update only if there is a file path, this is to ensure update doesn't occur without the required files.
     def CheckAndUpdate(self):
         if not len(self.FilePath.text()) == 0:
             self.update()
@@ -367,8 +362,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         PhotoFiles.append(file)
                         NumberOfPhotos = NumberOfPhotos + 1
                 res.extend(file_names)
-            # print(PhotoFiles)
-            # print(TotalNumberOfPhotos)
 
             self.OriginalImage.setText("Loaded from folder")
             self.OriginalImage.setAlignment(Qt.AlignCenter)
@@ -377,8 +370,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.PreviewImage.setText("No preview for folder\n Number of Images in folder : " + str(NumberOfPhotos))
             self.PreviewImage.setAlignment(Qt.AlignCenter)
             self.PreviewImage.setStyleSheet(SetupFile.EmptyImage)
-
-            # send to add logo to all images
 
     # Open file dialog to import image
     def ImportImage(self):

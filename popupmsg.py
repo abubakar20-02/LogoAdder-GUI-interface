@@ -68,17 +68,10 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.setMessage("File not found")
         self.setTitle("Warning")
 
+    # Method to set message for the pop-up message.
     def setMessage(self, Message):
         self.Text.setText(Message)
 
+    # Method to set title for the pop-up message.
     def setTitle(self, Title):
         self.setWindowTitle(Title)
-
-
-if __name__ == "__main__":
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = MyWindow()
-    MainWindow.show()
-    sys.exit(app.exec_())

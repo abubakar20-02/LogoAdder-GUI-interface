@@ -1,7 +1,6 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject
 from PyQt5.QtGui import QIcon
-
 import ConversionCompletePopUp
 import SetupFile
 
@@ -58,13 +57,14 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.StopButton.setStyleSheet(SetupFile.Button)
         self.StopButton.clicked.connect(self.ClosedinBetween)
 
-
+    # Method to update progress bar.
     def updateProgressBar(self, current, Max):
         self.progressBar.setValue((current / Max) * 100)
         if self.progressBar.value() == 100:
             self.openConversionCompletePopUp()
             self.close()
 
+    # Open Pop up.
     def openConversionCompletePopUp(self):
         self.window = QtWidgets.QMainWindow()
         self.window = ConversionCompletePopUp.MyWindow()
@@ -72,6 +72,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.window.setDirectory(self.directory)
         self.window.show()
 
+    # Open Pop up.
     def ClosedinBetween(self):
         self.close()
         self.window = QtWidgets.QMainWindow()
@@ -81,6 +82,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.window.setDirectory(self.directory)
         self.window.show()
 
+    # Method to set directory.
     def setDirectory(self, directory):
         self.directory = directory
 

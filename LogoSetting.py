@@ -222,7 +222,7 @@ class Ui_Form(QObject):
 
 # get values from file
 def getValuesFromFile():
-    # if the file doesnt exist, we make a file
+    # if the file doesn't exist, we make a file
     if not exists(SetupFile.SetUpFilePath):
         file = open(SetupFile.SetUpFilePath, "w")
         file.writelines("\n")
@@ -264,7 +264,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.pushButton.clicked.connect(self.ApplyChanges)
         self.CloseButton.clicked.connect(self.close)
 
-    # set values from file
+    # Set values from file.
     def setValuesFromFile(self):
         FilePath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = getValuesFromFile()
 
@@ -293,7 +293,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
             file.writelines(str(self.LogoPositionHeightBox.value()))
             file.close()
 
-    # import logo and add it to logo previewer
+    # Import logo and add it to logo previewer.
     def ImportLogo(self):
         filename = QFileDialog.getOpenFileName(self, 'Logo',
                                                'Logo', "Logo(*.png);;Logo(*.jpeg);;Logo(*.jpg)")
