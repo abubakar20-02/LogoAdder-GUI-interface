@@ -59,17 +59,16 @@ def SaveNewImage():
 
 # add logo to the image.
 def AddLogo(OriginalImage):
-    try:
-        LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
-        resizeImage(OriginalImage)
-        Background = Image.open(SetupFile.SavedPathWithResize)
-        BackgroundWidth = Background.size[0]
-        BackgroundHeight = Background.size[1]
-
-        if len(LogoPath.strip()) == 0:
-            print("not found")
-            # self.openPopUpWindow("No logo found!")
-        else:
+    LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
+    resizeImage(OriginalImage)
+    Background = Image.open(SetupFile.SavedPathWithResize)
+    BackgroundWidth = Background.size[0]
+    BackgroundHeight = Background.size[1]
+    if len(LogoPath.strip()) == 0:
+        print("not found")
+        # self.openPopUpWindow("No logo found!")
+    else:
+        try:
             Logo = Image.open(LogoPath.strip())
             # resize on the scale of the background
             Logo = Logo.resize(
@@ -90,11 +89,10 @@ def AddLogo(OriginalImage):
                 Background.paste(Logo,
                                  (int((LogoPositionWidth / 100) * maxWidth),
                                   int((LogoPositionHeight / 100) * maxHeight)))
-
-            # Save the image in the desired path.
-            Background.save(SetupFile.SavedPathWithLogo)
-    except:
-        print("can't add logo")
+        except:
+            print("can't add logo")
+    # Save the image in the desired path.
+    Background.save(SetupFile.SavedPathWithLogo)
 
 
 # method to resize original image.
