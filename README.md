@@ -35,7 +35,6 @@ There are 2 ways of adding a file. Either by dragging and dropping the file or S
  <br><br>
 </p>
 
-<br><br>
 <p>
  <h3>User can also drag and drop a directory instead of a file to process the entire directory</h3>
  <br>
