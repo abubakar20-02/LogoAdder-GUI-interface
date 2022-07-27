@@ -22,8 +22,6 @@ Pyqt5 supports Python 3.5- 3.9
 
 ## Adding files
 ![Import images](https://user-images.githubusercontent.com/93462990/181371179-b5c5a87c-c60c-41b9-bb14-ff7ef934e090.gif)
-will
 ![DragAndDropLogo](https://user-images.githubusercontent.com/93462990/181371207-af990459-a832-4771-b741-e17a2f29e308.gif)
-it
-![DragAndDropp](https://user-images.githubusercontent.com/93462990/181371639-ae6dcae6-cc10-4c0b-9ab1-88d25f028d80.gif)
-work
+![DragAndDropFile](https://user-images.githubusercontent.com/93462990/181372194-afa168d9-3bd8-4b48-ba43-be8e26171d97.gif)
+
