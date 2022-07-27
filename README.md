@@ -1,6 +1,6 @@
 #  LogoAdder
 
-Simple application to add logo.
+A simple windows application built to add logo to an image. What make's this application unique is that the user can drop a folder and it would add logo to all images in the folder.
 
 ## Table of Contents 📘
 * [Libraries](#libraries)
@@ -15,4 +15,5 @@ Download the requirements.txt file and while in virtual environment
 ```
 pip install -r requirements.txt
 ```
-Note: Pyqt5 supports 3.5- 3.9
+## Note
+Pyqt5 supports Python 3.5- 3.9
