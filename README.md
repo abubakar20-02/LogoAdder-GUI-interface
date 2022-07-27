@@ -14,3 +14,5 @@ The following libraries were used in this project:
 Download the requirements.txt file and while in virtual environment
 ```
 pip install -r requirements.txt
+```
+Note:Pyqt5 supports 3.5- 3.9
