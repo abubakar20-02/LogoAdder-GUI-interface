@@ -1,13 +1,11 @@
 import os
-import time
-from functools import partial
 from os import walk
 from os.path import exists
 
 from PIL import Image
 from PIL.Image import Resampling
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import QObject, Qt, QThread, QSemaphore, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import QObject, Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QApplication
 
