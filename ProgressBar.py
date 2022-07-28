@@ -8,7 +8,9 @@ import SetupFile
 class Ui_Form(QObject):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.setFixedSize(363, 80)
+        Form.resize(363, 80)
+        Form.setMinimumSize(QtCore.QSize(0, 0))
+        Form.setMaximumSize(QtCore.QSize(400, 100))
         Form.setWindowTitle("Converting...")
         self.setWindowModality(QtCore.Qt.ApplicationModal)
         Form.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
@@ -40,6 +42,7 @@ class Ui_Form(QObject):
         self.StopButton = QtWidgets.QPushButton(Form)
         self.StopButton.setObjectName("StopButton")
         self.StopButton.setText("Stop")
+        self.StopButton.setMinimumSize(QtCore.QSize(100, 30))
         self.horizontalLayout.addWidget(self.StopButton)
         self.verticalLayout_3.addLayout(self.horizontalLayout)
         self.verticalLayout_4.addLayout(self.verticalLayout_3)

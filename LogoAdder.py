@@ -1,7 +1,7 @@
 import os
 from os import walk
 from os.path import exists
-
+import ctypes
 from PIL import Image
 from PIL.Image import Resampling
 from PyQt5 import QtCore, QtWidgets
@@ -21,6 +21,12 @@ NumberOfPhotos = 0
 total = 0
 Close = False
 sem = QSemaphore(1)
+
+
+def screen():
+    user32 = ctypes.windll.user32
+    screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+    print(screensize)
 
 
 # checks if required folder is present, if it isn't present, it makes the folder.
@@ -125,6 +131,7 @@ class Ui_MainWindow(QObject):
         FolderPresentEnsured(SetupFile.OutputFolder)
         FolderPresentEnsured(SetupFile.LogoFolder)
         ImageSettingPage.FilePresentEnsured()
+        screen()
 
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(690, 542)
@@ -375,7 +382,8 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                                    'Image', "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
             path = filename[0]
             self.FilePath.setText(path)
-            self.update()
+            if not len(path) == 0:
+                self.update()
         except:
             None
 

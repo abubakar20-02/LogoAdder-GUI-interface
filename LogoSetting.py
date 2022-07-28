@@ -7,7 +7,6 @@ from PyQt5.QtWidgets import QFileDialog, QLabel
 
 import SetupFile
 
-
 class Ui_Form(QObject):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -58,7 +57,7 @@ class Ui_Form(QObject):
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
 
         self.LogoSizeWidthText = QtWidgets.QLabel(Form)
-        self.LogoSizeWidthText.setMaximumSize(QtCore.QSize(30, 30))
+        self.LogoSizeWidthText.setMaximumSize(QtCore.QSize(40, 40))
         self.LogoSizeWidthText.setObjectName("LogoSizeWidthText")
         self.horizontalLayout_3.addWidget(self.LogoSizeWidthText)
 
@@ -132,7 +131,7 @@ class Ui_Form(QObject):
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
 
         self.LogoPositionWidthText = QtWidgets.QLabel(Form)
-        self.LogoPositionWidthText.setMaximumSize(QtCore.QSize(30, 30))
+        self.LogoPositionWidthText.setMaximumSize(QtCore.QSize(40, 40))
         self.LogoPositionWidthText.setObjectName("LogoPositionWidthText")
         self.horizontalLayout_7.addWidget(self.LogoPositionWidthText)
 
