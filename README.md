@@ -19,10 +19,12 @@ Download the requirements.txt file and while in virtual environment
 ```
 pip install -r requirements.txt
 ```
-## <a name="Note"></a>
+<a name="Note"></a>
+## Note
 Pyqt5 supports Python 3.5- 3.9
 
-## <a name="Adding Files"></a>
+## Adding Files
+<a name="Adding Files"></a>
 There are 2 ways of adding a file. Either by dragging and dropping the file or Selecting it from the directory using the import button.
 <br>
 <p>
