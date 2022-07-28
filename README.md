@@ -27,6 +27,7 @@ There are 2 ways of adding a file. Either by dragging and dropping the file or S
  <img align= left width= 600 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/Import%20images.gif">
   <h4>-Using drag and drop</h4>
   <br clear="left"/>
+  <br><br><br>
 </p>
 
 <p>
