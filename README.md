@@ -24,20 +24,21 @@ Pyqt5 supports Python 3.5- 3.9
 There are 2 ways of adding a file. Either by dragging and dropping the file or Selecting it from the directory using the import button.
 <br>
 <p>
- <h4>-Using file direcotry</h4>
- <img align= left width= 750 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/Import%20images.gif">
- <br>
-</p>
-<p>
- <img align= right width= 750 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/DragAndDropLogo.gif">
- <h4>-Using drag and drop</h4>
- <br>
+ <img align= left width= 600 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/Import%20images.gif">
+  <h4>-Using drag and drop</h4>
+  <br clear="left"/>
 </p>
 
 <p>
- <h3>User can also drag and drop a directory instead of a file to process the entire directory</h3>
- <h4>-Using drag and drop for directory</h4>
- <img align = left width = 750 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/DragAndDropFile.gif">
- <br>
+ <img align= right width= 750 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/DragAndDropLogo.gif">
+ <h4>-Using drag and drop</h4>
+ <br clear="left"/>
+</p>
+
+<p>
+  <h3>User can also drag and drop a directory instead of a file to process the entire directory</h3>
+  <img align = left width = 750 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/DragAndDropFile.gif">
+  <h4>-Using drag and drop for directory</h4>
+  <br clear="left"/>
 </p>
 
