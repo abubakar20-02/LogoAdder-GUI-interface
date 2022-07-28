@@ -37,13 +37,13 @@ There are 2 ways of adding a file. Either by dragging and dropping the file or S
 
 <p>
  <img align= right width= 600 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/DragAndDropLogo.gif">
-<h4>  -Using drag and drop</h4></pre>
-The user can drag and drop to the application directly.</pre>
+<h4>Using drag and drop</h4></pre>
+The user can drag and drop to the application directly.
  <br clear="right"/>
- <br><hr><br><br>
+ <br><hr><br>
 </p>
 <br clear="right"/>
-  <h3>User can also drag and drop a directory instead of a file to process the entire directory</h3>
+  <h2>User can also drag and drop a directory instead of a file to process the entire directory</h2>
 <p>
   <img align = right width = 600 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/DragAndDropFile.gif">
   <h4>-Using drag and drop for directory</h4>
