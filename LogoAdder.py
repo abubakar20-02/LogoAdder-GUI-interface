@@ -23,12 +23,6 @@ Close = False
 sem = QSemaphore(1)
 
 
-def screen():
-    user32 = ctypes.windll.user32
-    screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
-    print(screensize)
-
-
 # checks if required folder is present, if it isn't present, it makes the folder.
 def FolderPresentEnsured(Folder):
     if not exists(Folder):
@@ -58,7 +52,7 @@ def SaveNewImage():
         savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
                                                        "Output", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
         if check:
-            img1 = Image.open(SetupFile.SavedPathWithLogo)
+            img1 = Image.open(SetupFile.SavedPathWithLogo).convert('RGB')
             img1.save(savedFile)
             os.startfile(savedFile)
 
@@ -67,11 +61,11 @@ def SaveNewImage():
 def AddLogo(OriginalImage):
     LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
     resizeImage(OriginalImage)
-    Background = Image.open(SetupFile.SavedPathWithResize)
+    Background = Image.open(SetupFile.SavedPathWithResize).convert('RGB')
     BackgroundWidth = Background.size[0]
     BackgroundHeight = Background.size[1]
     try:
-        Logo = Image.open(LogoPath.strip())
+        Logo = Image.open(LogoPath.strip()).convert('RGB')
         # resize on the scale of the background
         Logo = Logo.resize(
             (int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
@@ -131,7 +125,6 @@ class Ui_MainWindow(QObject):
         FolderPresentEnsured(SetupFile.OutputFolder)
         FolderPresentEnsured(SetupFile.LogoFolder)
         ImageSettingPage.FilePresentEnsured()
-        screen()
 
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(690, 542)
