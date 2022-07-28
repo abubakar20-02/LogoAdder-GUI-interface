@@ -7,7 +7,7 @@ A simple windows application built to add logo to an image. What make's this app
 ## Table of Contents 📘
 * [Libraries](#libraries)
 * [Note](#Note)
-* [Adding files](#AddingFiles)
+* [Adding files](#Adding Files)
 
 # <a name="libraries"></a>
 ## Libraries 💻
@@ -19,14 +19,14 @@ Download the requirements.txt file and while in virtual environment
 ```
 pip install -r requirements.txt
 ```
-## Note
+## <a name="Note"></a>
 Pyqt5 supports Python 3.5- 3.9
 
-## AddingFiles
+## <a name="Adding Files"></a>
 There are 2 ways of adding a file. Either by dragging and dropping the file or Selecting it from the directory using the import button.
 <br>
 <p>
- <img src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/Import%20images.gif" align= centre; width= 600;>
+ <img src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/Import%20images.gif" align= centre width= 600>
  <h4>Using the import button</h4>
  The user clicks on the import button which asks the user to give the file location via the file explorer directory.
   <br clear="left"/>
