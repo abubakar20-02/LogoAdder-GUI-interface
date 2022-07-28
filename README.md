@@ -8,7 +8,7 @@ A simple windows application built to add logo to an image. What make's this app
 * [Libraries](#libraries)
 * [Note](#Note)
 * [Adding files](#AddingFiles)
-* [Setting](#Setting)
+* [Settings](#Setting)
 
 # <a name="libraries"></a>
 ## Libraries 💻
@@ -21,7 +21,7 @@ Download the requirements.txt file and while in virtual environment
 pip install -r requirements.txt
 ```
 <a name="Note"></a>
-## Note
+## Note 🗒️
 Pyqt5 supports Python 3.5- 3.9
 
 <a name="AddingFiles"></a>
