@@ -23,8 +23,8 @@ pip install -r requirements.txt
 ## Note
 Pyqt5 supports Python 3.5- 3.9
 
-## Adding Files
 <a name="AddingFiles"></a>
+## Adding Files
 There are 2 ways of adding a file. Either by dragging and dropping the file or Selecting it from the directory using the import button.
 <br>
 <p>
