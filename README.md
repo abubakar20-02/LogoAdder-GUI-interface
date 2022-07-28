@@ -32,7 +32,7 @@ There are 2 ways of adding a file. Either by dragging and dropping the file or S
 <p>
  <img align= right width= 600 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/DragAndDropLogo.gif">
  <h4>-Using drag and drop</h4>
- <br clear="left"/>
+ <br clear="right"/>
 </p>
 <br clear="left"/>
   <h3>User can also drag and drop a directory instead of a file to process the entire directory</h3>
