@@ -28,7 +28,7 @@ There are 2 ways of adding a file. Either by dragging and dropping the file or S
   <h4>  -Using the import button</h4>
     The user clicks on the import button which asks the user to give the file location via the file explorer directory.
   <br clear="left"/>
-  <br><br><br>
+  <br><hr><br><br>
 </p>
 
 <p>
