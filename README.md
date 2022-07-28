@@ -25,15 +25,16 @@ There are 2 ways of adding a file. Either by dragging and dropping the file or S
 <br>
 <p>
  <img align= left width= 600 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/Import%20images.gif">
-  <h4>-Using drag and drop</h4>
-  The user can drag and drop to the application directly.
+  <h4>  -Using the import button</h4>
+    The user clicks on the import button which asks the user to give the file location via the file explorer directory.
   <br clear="left"/>
   <br><br><br>
 </p>
 
 <p>
  <img align= right width= 600 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/DragAndDropLogo.gif">
- <h4>-Using drag and drop</h4>
+  <h4>  -Using drag and drop</h4>
+    The user can drag and drop to the application directly.
  <br clear="right"/>
 </p>
 <br clear="left"/>
