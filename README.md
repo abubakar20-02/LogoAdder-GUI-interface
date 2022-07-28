@@ -47,7 +47,8 @@ The user can drag and drop to the application directly.
   <br><br><br>
 <p>
   <img align = right width = 600 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/DragAndDropFile.gif">
-  <h4>-Using drag and drop for directory</h4>
+  <h4>Using drag and drop for directory</h4>
+  The user can drag and drop an entire directory to process multiple image files in one go.
   <br clear="right"/>
   <br><hr><br><br>
 </p>
