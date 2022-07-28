@@ -43,7 +43,7 @@ The user can drag and drop to the application directly.
  <br><hr>
 </p>
 <br clear="right"/>
-  <h3>User can also drag and drop a directory instead of a file to process the entire directory</h3>
+User can also drag and drop a directory instead of a file to process the entire directory
   <br><br><br>
 <p>
   <img align = right width = 600 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/DragAndDropFile.gif">
