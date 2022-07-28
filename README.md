@@ -6,6 +6,8 @@ A simple windows application built to add logo to an image. What make's this app
 
 ## Table of Contents 📘
 * [Libraries](#libraries)
+* [Note](#Note)
+* [Adding files](#Adding files)
 
 # <a name="libraries"></a>
 ## Libraries 💻
