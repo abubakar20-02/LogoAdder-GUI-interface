@@ -35,8 +35,8 @@ There are 2 ways of adding a file. Either by dragging and dropping the file or S
 
 <p>
  <img align= right width= 600 src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/DragAndDropLogo.gif">
-  <pre><h4>  -Using drag and drop</h4></pre>
-  <pre>  The user can drag and drop to the application directly.</pre>
+<h4>  -Using drag and drop</h4></pre>
+The user can drag and drop to the application directly.</pre>
  <br clear="right"/>
 </p>
 <br clear="left"/>
