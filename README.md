@@ -27,8 +27,8 @@ Pyqt5 supports Python 3.5- 3.9
 ## Adding Files
 There are 2 ways of adding a file. Either by dragging and dropping the file or Selecting it from the directory using the import button.
 <br>
-<p>
- <img src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/Import%20images.gif" align= "center" width= 600>
+<p align="center">
+ <img src="https://github.com/abubakar20-02/LogoAdder-GUI-interface/blob/master/gif/Import%20images.gif" width= 600>
  <h4>Using the import button</h4>
  The user clicks on the import button which asks the user to give the file location via the file explorer directory.
   <br clear="left"/>
