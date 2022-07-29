@@ -52,7 +52,9 @@ def SaveNewImage():
         savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
                                                        "Output", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
         if check:
-            img1 = Image.open(SetupFile.SavedPathWithLogo).convert('RGB')
+            img1 = Image.open(SetupFile.SavedPathWithLogo)
+            if has_transparency(img1):
+                img1.convert("RGBA")
             img1.save(savedFile)
             os.startfile(savedFile)
 
@@ -61,11 +63,23 @@ def SaveNewImage():
 def AddLogo(OriginalImage):
     LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
     resizeImage(OriginalImage)
-    Background = Image.open(SetupFile.SavedPathWithResize).convert('RGB')
+    Background = Image.open(SetupFile.SavedPathWithResize)
+    if has_transparency(Background):
+        Background.convert("RGBA")
+        print("Background transparent")
+    else:
+        Background.convert("RGB")
+        print("Background not transparent")
     BackgroundWidth = Background.size[0]
     BackgroundHeight = Background.size[1]
     try:
-        Logo = Image.open(LogoPath.strip()).convert('RGB')
+        Logo = Image.open(LogoPath.strip())
+        if has_transparency(Logo):
+            Logo.convert("RGBA")
+            print("Logo transparent")
+        else:
+            Logo.convert("RGB")
+            print("Logo not transparent")
         # resize on the scale of the background
         Logo = Logo.resize(
             (int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
