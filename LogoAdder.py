@@ -49,12 +49,14 @@ def has_transparency(img):
 # save the new combined single image.
 def SaveNewImage():
     if exists(SetupFile.SavedPathWithLogo):
-        savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
-                                                       "Output", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
+        img1 = Image.open(SetupFile.SavedPathWithLogo)
+        if has_transparency(img1):
+            savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
+                                                           "Output", "Image(*.png)")
+        else:
+            savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
+                                                           "Output", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
         if check:
-            img1 = Image.open(SetupFile.SavedPathWithLogo)
-            if has_transparency(img1):
-                img1.convert("RGBA")
             img1.save(savedFile)
             os.startfile(savedFile)
 
@@ -329,7 +331,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     # Update only if there is a file path, this is to ensure update doesn't occur without the required files.
     def CheckAndUpdate(self):
         if not len(self.FilePath.text()) == 0:
-            self.update()
+            self.updateSingleImageView()
 
     # Open the pop-up MainWindow.
     def openPopUpWindow(self, message):
@@ -346,19 +348,11 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # update the main screen with original image and preview of the combined image.
     def update(self):
+        self.updateSingleImageView()
+        self.updateMultipleFileView()
+
+    def updateMultipleFileView(self):
         name, extension = os.path.splitext(self.FilePath.text())
-        if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-            if not len(self.FilePath.text()) == 0:
-                self.OriginalImage.setText("")
-                self.PreviewImage.setText("")
-                self.OriginalImage.setStyleSheet("QLabel{\n"
-                                                 "    border: 1px solid;\n"
-                                                 "    image: url(" + self.FilePath.text() + ");\n"
-                                                                                            "background-color: gray;\n "
-                                                                                            "     }\n"
-                                                                                            "")
-                AddLogo(self.FilePath.text())
-                self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
         if extension == "":
             global NumberOfPhotos
             dir_path = self.FilePath.text()
@@ -382,6 +376,21 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.PreviewImage.setAlignment(Qt.AlignCenter)
             self.PreviewImage.setStyleSheet(SetupFile.EmptyImage)
 
+    def updateSingleImageView(self):
+        name, extension = os.path.splitext(self.FilePath.text())
+        if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+            if not len(self.FilePath.text()) == 0:
+                self.OriginalImage.setText("")
+                self.PreviewImage.setText("")
+                self.OriginalImage.setStyleSheet("QLabel{\n"
+                                                 "    border: 1px solid;\n"
+                                                 "    image: url(" + self.FilePath.text() + ");\n"
+                                                                                            "background-color: gray;\n "
+                                                                                            "     }\n"
+                                                                                            "")
+                AddLogo(self.FilePath.text())
+                self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
+
     # Open file dialog to import image
     def ImportImage(self):
         try:
@@ -390,7 +399,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             path = filename[0]
             self.FilePath.setText(path)
             if not len(path) == 0:
-                self.update()
+                self.updateSingleImageView()
         except:
             None
 
