@@ -7,6 +7,28 @@ from PyQt5.QtWidgets import QFileDialog, QLabel
 
 import SetupFile
 
+
+# get values from file
+def getValuesFromFile():
+    # if the file doesn't exist, we make a file
+    if not exists(SetupFile.LogoSetUpFilePath):
+        file = open(SetupFile.LogoSetUpFilePath, "w")
+        file.writelines("\n")
+        file.writelines("0" + "\n")
+        file.writelines("0" + "\n")
+        file.writelines("0" + "\n")
+        file.writelines("0")
+        file.close()
+    file = open(SetupFile.LogoSetUpFilePath, "r")
+    FilePath = file.readline().strip()
+    LogoSizeWidth = int(file.readline().strip())
+    LogoSizeHeight = int(file.readline().strip())
+    LogoPositionWidth = int(file.readline().strip())
+    LogoPositionHeight = int(file.readline().strip())
+    file.close()
+    return FilePath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth
+
+
 class Ui_Form(QObject):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -200,8 +222,6 @@ class Ui_Form(QObject):
         self.horizontalLayout_2.addWidget(self.pushButton)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
-        self.setValuesFromFile()
-
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -219,33 +239,13 @@ class Ui_Form(QObject):
         self.pushButton.setText(_translate("Form", "Apply Changes"))
 
 
-# get values from file
-def getValuesFromFile():
-    # if the file doesn't exist, we make a file
-    if not exists(SetupFile.SetUpFilePath):
-        file = open(SetupFile.SetUpFilePath, "w")
-        file.writelines("\n")
-        file.writelines("0" + "\n")
-        file.writelines("0" + "\n")
-        file.writelines("0" + "\n")
-        file.writelines("0")
-        file.close()
-    file = open(SetupFile.SetUpFilePath, "r")
-    FilePath = file.readline().strip()
-    LogoSizeWidth = int(file.readline().strip())
-    LogoSizeHeight = int(file.readline().strip())
-    LogoPositionWidth = int(file.readline().strip())
-    LogoPositionHeight = int(file.readline().strip())
-    file.close()
-    return FilePath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth
-
-
 class MyWindow(QtWidgets.QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.setWindowIcon(QIcon(SetupFile.MainIcon))
         self.setLimitsToComboBox(0, 100)
+        self.setValuesFromFile()
 
         self.LogoSizeWidthBox.valueChanged.connect(self.AdjustLogoSizeWidthSlider)
         self.LogoSizeWidth.valueChanged.connect(self.AdjustLogoSizeWidthBox)
@@ -278,13 +278,13 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.LogoPositionHeight.setValue(LogoPositionHeight)
         self.PreviewImage.setStyleSheet(
             "QLabel{border: 1px solid;image: url(" + FilePath + ");background-color: "
-                                                                "white;}")
+                                                                "gray;}")
 
     # save input from ui to file
     # when called by the main file it also updates the screen.
     def ApplyChanges(self):
         if not len(self.FilePath.text()) == 0:
-            file = open(SetupFile.SetUpFilePath, "w")
+            file = open(SetupFile.LogoSetUpFilePath, "w")
             file.writelines(self.FilePath.text() + "\n")
             file.writelines(str(self.LogoSizeWidthBox.value()) + "\n")
             file.writelines(str(self.LogoSizeHeightBox.value()) + "\n")
@@ -301,7 +301,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
             self.FilePath.setText(path)
             self.PreviewImage.setStyleSheet(
                 "QLabel{border: 1px solid;image: url(" + self.FilePath.text() + ");background-color: "
-                                                                                "white;}")
+                                                                                "gray;}")
 
     # adjust slider according to box
     def AdjustLogoSizeWidthSlider(self):

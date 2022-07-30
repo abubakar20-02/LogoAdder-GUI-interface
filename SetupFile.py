@@ -87,7 +87,7 @@ ComboBox = ("QComboBox{\n"
             "}"
             )
 
-SetUpFilePath = ProgramFilesFolder + "/Setup.txt"
+LogoSetUpFilePath = ProgramFilesFolder + "/LogoSetup.txt"
 
 ImageSetupFilePath = ProgramFilesFolder + "/ImageSetup.txt"
 
