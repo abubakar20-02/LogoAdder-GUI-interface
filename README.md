@@ -2,7 +2,7 @@
 
 A simple windows application built to add logo to an image. What make's this application unique is that the user can drop a folder and it would add logo to all images in the folder.
 
- The setup exe file can be download from [here](https://drive.google.com/file/d/1ruk_XsDJcKzAXf4dsd1MHLYzYMK7UAZL/view?usp=sharing), simply run the setup file to install the software.
+ The setup.exe file can be download from [here](https://drive.google.com/file/d/1MhuOnpHhGqo91t71o5IfRWZSZrRb0jg_/view?usp=sharing), simply run the setup file to install the software.
 
 ## Table of Contents 📘
 * [Libraries](#libraries)
