@@ -1,133 +1,16 @@
-import os
 from os import walk
-from os.path import exists
-import ctypes
-from PIL import Image
-from PIL.Image import Resampling
-from PyQt5 import QtCore, QtWidgets
+
 from PyQt5.QtCore import QObject, Qt, QThread, pyqtSignal, QSemaphore
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QFileDialog, QApplication
+from PyQt5.QtWidgets import QApplication
 
-import ExploringFilePopUp
-import ImageSettingPage
-import LogoSetting
-import ProgressBar
-import SetupFile
-import popupmsg
+from Functions import *
 
-PhotoFiles = []
-trial = []
 NumberOfPhotos = 0
 total = 0
 Close = False
 sem = QSemaphore(1)
-
-
-# checks if required folder is present, if it isn't present, it makes the folder.
-def FolderPresentEnsured(Folder):
-    if not exists(Folder):
-        os.mkdir(Folder)
-
-
-# checks if logo is transparent or not.
-def has_transparency(img):
-    if img.info.get("transparency", None) is not None:
-        return True
-    if img.mode == "P":
-        transparent = img.info.get("transparency", -1)
-        for _, index in img.getcolors():
-            if index == transparent:
-                return True
-    elif img.mode == "RGBA":
-        extrema = img.getextrema()
-        if extrema[3][0] < 255:
-            return True
-
-    return False
-
-
-# save the new combined single image.
-def SaveNewImage():
-    if exists(SetupFile.SavedPathWithLogo):
-        img1 = Image.open(SetupFile.SavedPathWithLogo)
-        if has_transparency(img1):
-            savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
-                                                           "Output", "Image(*.png)")
-        else:
-            savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
-                                                           "Output", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
-        if check:
-            img1.save(savedFile)
-            os.startfile(savedFile)
-
-
-# add logo to the image if logo is present, otherwise just resize the image.
-def AddLogo(OriginalImage):
-    LogoPath, LogoPositionHeight, LogoPositionWidth, LogoSizeHeight, LogoSizeWidth = LogoSetting.getValuesFromFile()
-    resizeImage(OriginalImage)
-    Background = Image.open(SetupFile.SavedPathWithResize)
-    if has_transparency(Background):
-        Background.convert("RGBA")
-    else:
-        Background.convert("RGB")
-    BackgroundWidth = Background.size[0]
-    BackgroundHeight = Background.size[1]
-    try:
-        Logo = Image.open(LogoPath.strip())
-        if has_transparency(Logo):
-            Logo.convert("RGBA")
-        else:
-            Logo.convert("RGB")
-        # resize on the scale of the background
-        Logo = Logo.resize(
-            (int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
-        LogoWidth = Logo.size[0]
-        LogoHeight = Logo.size[1]
-
-        maxWidth = BackgroundWidth - LogoWidth
-        maxHeight = BackgroundHeight - LogoHeight
-
-        # set position of logo on the scale of the background
-        if has_transparency(Logo):
-            Background.paste(Logo,
-                             (int((LogoPositionWidth / 100) * maxWidth),
-                              int((LogoPositionHeight / 100) * maxHeight)),
-                             Logo)
-        else:
-            Background.paste(Logo,
-                             (int((LogoPositionWidth / 100) * maxWidth),
-                              int((LogoPositionHeight / 100) * maxHeight)))
-    except:
-        None
-    Background.save(SetupFile.SavedPathWithLogo)
-
-
-# method to resize original image.
-def resizeImage(originalImagePath):
-    img = Image.open(originalImagePath)
-    file = open(SetupFile.ImageSetupFilePath, "r")
-    RadioButtonFlagText = file.readline().strip()
-    if RadioButtonFlagText == "True":
-        RadioButtonChecked = True
-    else:
-        RadioButtonChecked = False
-    ComboBoxCurrentIndex = int(file.readline().strip())
-    ImageWidth = int(file.readline().strip())
-    ImageHeight = int(file.readline().strip())
-    file.close()
-    if not RadioButtonChecked:
-        if ComboBoxCurrentIndex == 0:
-            img = img.resize((1280, 720), Resampling.LANCZOS)
-        if ComboBoxCurrentIndex == 1:
-            img = img.resize((1920, 1080), Resampling.LANCZOS)
-        if ComboBoxCurrentIndex == 2:
-            img = img.resize((2560, 1440), Resampling.LANCZOS)
-        if ComboBoxCurrentIndex == 3:
-            img = img.resize((3840, 2160), Resampling.LANCZOS)
-        if ComboBoxCurrentIndex == 4:
-            img = img.resize((ImageWidth, ImageHeight), Resampling.LANCZOS)
-    img.save(SetupFile.SavedPathWithResize)
+Stop = False
 
 
 class Ui_MainWindow(QObject):
@@ -254,14 +137,21 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setAcceptDrops(True)
         self.setWindowIcon(QIcon(SetupFile.MainIcon))
+
+        self.ButtonConnections()
+        self.MenuBarConnections()
+
+    def ButtonConnections(self):
         self.ImportImageButton.clicked.connect(self.ImportImage)
         self.ConvertButton.clicked.connect(self.Save)
-        self.LogoSetting.triggered.connect(self.openLogoSetting)
-        self.ImageSetting.triggered.connect(self.openImageSetting)
+
+    def MenuBarConnections(self):
+        self.LogoSetting.triggered.connect(lambda: openLogoSetting(self))
+        self.ImageSetting.triggered.connect(lambda: openImageSetting(self))
 
     # save multiple combined photos in a folder.
     def SaveMultipleImages(self):
-        ProgressBar = self.getProgressBar()
+        ProgressBar = getProgressBar(self)
         ProgressBar.StopButton.clicked.connect(self.Close)
         ProgressBar.progressBar.setValue(0)
         global NumberOfPhotos
@@ -301,52 +191,18 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # check if it is to save a single image or multiple images.
     def Save(self):
-        name, extension = os.path.splitext(self.FilePath.text())
-        if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-            SaveNewImage()
-        else:
-            global NumberOfPhotos
-            if not NumberOfPhotos == 0:
-                self.SaveMultipleImages()
-            else:
-                self.openPopUpWindow("No images found in the folder!")
-
-    # Open the test model MainWindow
-    def openLogoSetting(self):
-        self.window = QtWidgets.QMainWindow()
-        self.window = LogoSetting.MyWindow()
-        self.window.show()
-        self.window.pushButton.clicked.connect(self.CheckAndUpdate)
-
-    # Open the test model MainWindow
-    def openImageSetting(self):
-        self.window = QtWidgets.QMainWindow()
-        self.window = ImageSettingPage.MyWindow()
-        self.window.show()
-        self.window.pushButton.clicked.connect(self.CheckAndUpdate)
-
-    # Update only if there is a file path, this is to ensure update doesn't occur without the required files.
-    def CheckAndUpdate(self):
         if not len(self.FilePath.text()) == 0:
-            self.updateSingleImageView()
-
-    # Open the pop-up MainWindow.
-    def openPopUpWindow(self, message):
-        self.window = QtWidgets.QMainWindow()
-        self.window = popupmsg.MyWindow()
-        self.window.setMessage(message)
-        self.window.show()
-
-    def getExploringFilePopUp(self):
-        self.a = QtWidgets.QMainWindow()
-        self.a = ExploringFilePopUp.MyWindow()
-        return self.a
-
-    # function to get the progress bar object.
-    def getProgressBar(self):
-        self.ProgressBar = QtWidgets.QMainWindow()
-        self.ProgressBar = ProgressBar.MyWindow()
-        return self.ProgressBar
+            name, extension = os.path.splitext(self.FilePath.text())
+            if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                SaveNewImage()
+            else:
+                global NumberOfPhotos
+                if not NumberOfPhotos == 0:
+                    self.SaveMultipleImages()
+                else:
+                    openPopUpWindow(self, "No images found in the folder!")
+        else:
+            openPopUpWindow(self, "No images to work with!")
 
     # update the main screen with original image and preview of the combined image.
     def update(self):
@@ -357,7 +213,8 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.updateSingleImageView()
 
     def updateMultipleFileView(self):
-        ExploringFilePopUp1 = self.getExploringFilePopUp()
+        ExploringFilePopUp1 = getExploringFilePopUp(self)
+        ExploringFilePopUp1.CancelButton.clicked.connect(self.trial)
         name, extension = os.path.splitext(self.FilePath.text())
         if extension == "":
             dir_path = self.FilePath.text()
@@ -374,27 +231,36 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.my_thread.started.connect(self.worker.run)
             self.worker.finished.connect(self.my_thread.quit)  # safely close the thread.
             self.worker.finished.connect(self.worker.deleteLater)
-            self.worker.finishedAllFiles.connect(self.finished)
+            self.worker.finished.connect(self.finished)
+            self.worker.finished.connect(ExploringFilePopUp1.Cancel)
             self.my_thread.finished.connect(self.finishThread)
+            self.worker.stop.connect(self.ClearScreen)
             self.worker.SystemDriveTriedtoAccess.connect(self.WarnUser)
             self.worker.SystemDriveTriedtoAccess.connect(ExploringFilePopUp1.closeWindow)
 
             self.my_thread.start()
             # end of thread
 
+    def trial(self):
+        print("trial")
+        global Stop
+        Stop = True
+
     def WarnUser(self, SystemDriveTriedtoAccess):
         if SystemDriveTriedtoAccess:
             self.ClearScreen()
-            self.openPopUpWindow("Restricted Access")
+            openPopUpWindow(self, "Restricted Access")
 
     def finished(self):
         global NumberOfPhotos
+        global Stop
         self.OriginalImage.setText("Loaded from folder")
         self.OriginalImage.setAlignment(Qt.AlignCenter)
         self.OriginalImage.setStyleSheet(SetupFile.EmptyImage)
         self.PreviewImage.setText("No preview for folder\n Number of Images in folder : " + str(NumberOfPhotos))
         self.PreviewImage.setAlignment(Qt.AlignCenter)
         self.PreviewImage.setStyleSheet(SetupFile.EmptyImage)
+        Stop = False
 
     def updateSingleImageView(self):
         name, extension = os.path.splitext(self.FilePath.text())
@@ -430,6 +296,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             event.ignore()
 
     def dropEvent(self, event):
+        self.ClearScreen()
         self.ConvertButton.setEnabled(True)
         FilePath = [u.toLocalFile() for u in event.mimeData().urls()]
         try:
@@ -437,10 +304,11 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 name, extension = os.path.splitext(f)
                 if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG" or extension.upper() == "":
                     self.FilePath.setText(f)
+                    print(f)
                     self.update()
                 else:
                     self.ClearScreen()
-                    self.openPopUpWindow("Please drop a folder or file")
+                    openPopUpWindow(self, "Please drop a folder or file")
         except:
             None
 
@@ -498,6 +366,7 @@ class Worker1(QObject):
     SystemDriveTriedtoAccess = pyqtSignal(bool)
     finished = pyqtSignal()
     finishedAllFiles = pyqtSignal()
+    stop = pyqtSignal()
 
     def __init__(self, directory):
         super(Worker1, self).__init__()
@@ -508,17 +377,21 @@ class Worker1(QObject):
             self.SystemDriveTriedtoAccess.emit(True)
         else:
             self.SystemDriveTriedtoAccess.emit(False)
-            print(self.directory)
             global NumberOfPhotos
             NumberOfPhotos = 0
-            global PhotoFiles
+            global Stop
             for (dir_path, dir_names, file_names) in walk(self.directory):
+                if Stop:
+                    self.stop.emit()
+                    break
                 for file in file_names:
+                    if Stop:
+                        self.stop.emit()
+                        break
                     name, extension = os.path.splitext(file)
                     if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
                         NumberOfPhotos = NumberOfPhotos + 1
                         self.TotalFiles.emit(NumberOfPhotos)
-            self.finishedAllFiles.emit()
         self.finished.emit()
 
 

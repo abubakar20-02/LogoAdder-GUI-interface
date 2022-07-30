@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject
+from PyQt5.QtGui import QIcon
 
 import LogoAdder
 import SetupFile
@@ -10,6 +11,7 @@ class Ui_Form(QObject):
         Form.setObjectName("Form")
         Form.setMinimumSize(QtCore.QSize(350, 76))
         Form.setMaximumSize(QtCore.QSize(400, 100))
+        self.setWindowIcon(QIcon(SetupFile.MainIcon))
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(Form)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
@@ -50,6 +52,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.CancelButton.setStyleSheet(SetupFile.Button)
         self.Message.setStyleSheet(SetupFile.FilePath)
         self.setMessage(0)
+        self.CancelButton.clicked.connect(self.Cancel)
 
     def setMessage(self, NumberOfImages):
         message = " Found " + str(NumberOfImages) + " image files"
@@ -59,6 +62,9 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         print(SystemDriveTriedtoAccess)
         if not SystemDriveTriedtoAccess:
             self.show()
+
+    def Cancel(self):
+        self.close()
 
 
 if __name__ == "__main__":
