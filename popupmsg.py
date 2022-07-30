@@ -7,9 +7,11 @@ import SetupFile
 
 class Ui_Form(QObject):
     def setupUi(self, Form):
+        self.setWindowModality(QtCore.Qt.ApplicationModal)
+        Form.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
         Form.setObjectName("Form")
         Form.resize(350, 105)
-        Form.setMinimumSize(QtCore.QSize(0, 0))
+        Form.setMinimumSize(QtCore.QSize(350, 105))
         Form.setMaximumSize(QtCore.QSize(660, 400))
 
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(Form)

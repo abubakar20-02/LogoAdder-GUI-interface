@@ -265,19 +265,25 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         Stop = False
 
     def updateSingleImageView(self):
+        ProcessingPopUp = getProcessingPopUp(self)
         name, extension = os.path.splitext(self.FilePath.text())
         if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
             if not len(self.FilePath.text()) == 0:
-                self.OriginalImage.setText("")
-                self.PreviewImage.setText("")
-                self.OriginalImage.setStyleSheet("QLabel{\n"
-                                                 "    border: 1px solid;\n"
-                                                 "    image: url(" + self.FilePath.text() + ");\n"
-                                                                                            "background-color: gray;\n "
-                                                                                            "     }\n"
-                                                                                            "")
-                AddLogo(self.FilePath.text())
-                self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
+                ProcessingPopUp.show()
+                self.my_thread = QThread()
+                self.worker = Worker2(self.FilePath, self.OriginalImage, self.PreviewImage)
+
+                # We're connecting things to the correct spots
+                self.worker.moveToThread(self.my_thread)  # move worker to thread.
+                # update ui elements
+                self.my_thread.started.connect(self.worker.run)
+                self.worker.finished.connect(self.my_thread.quit)  # safely close the thread.
+                self.worker.finished.connect(self.worker.deleteLater)
+                self.worker.finished.connect(ProcessingPopUp.Close)
+                self.my_thread.finished.connect(self.finishThread)
+
+                self.my_thread.start()
+                # end of thread
 
     # Open file dialog to import image
     def ImportImage(self):
@@ -410,6 +416,29 @@ class Worker1(QObject):
             self.SystemDriveTriedtoAccess1.emit(True)
         if Stop:
             self.stop.emit()
+
+
+class Worker2(QObject):
+    finished = pyqtSignal()
+
+    def __init__(self, FilePath, OriginalImage, PreviewImage):
+        super(Worker2, self).__init__()
+        self.FilePath = FilePath
+        self.OriginalImage = OriginalImage
+        self.PreviewImage = PreviewImage
+
+    def run(self):
+        self.OriginalImage.setText("")
+        self.PreviewImage.setText("")
+        AddLogo(self.FilePath.text())
+        self.OriginalImage.setStyleSheet("QLabel{\n"
+                                         "    border: 1px solid;\n"
+                                         "    image: url(" + self.FilePath.text() + ");\n"
+                                                                                    "background-color: gray;\n "
+                                                                                    "     }\n"
+                                                                                    "")
+        self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
+        self.finished.emit()
 
 
 if __name__ == "__main__":

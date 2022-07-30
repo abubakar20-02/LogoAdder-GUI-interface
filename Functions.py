@@ -9,6 +9,7 @@ from PyQt5 import QtCore, QtWidgets
 import ExploringFilePopUp
 import ImageSettingPage
 import LogoSetting
+import ProcessingPopUp
 import ProgressBar
 import SetupFile
 import popupmsg
@@ -166,3 +167,9 @@ def getProgressBar(self):
     self.ProgressBar = QtWidgets.QMainWindow()
     self.ProgressBar = ProgressBar.MyWindow()
     return self.ProgressBar
+
+
+def getProcessingPopUp(self):
+    self.a = QtWidgets.QMainWindow()
+    self.a = ProcessingPopUp.MyWindow()
+    return self.a

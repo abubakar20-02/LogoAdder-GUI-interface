@@ -2,12 +2,13 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject
 from PyQt5.QtGui import QIcon
 
-import LogoAdder
 import SetupFile
 
 
 class Ui_Form(QObject):
     def setupUi(self, Form):
+        self.setWindowModality(QtCore.Qt.ApplicationModal)
+        Form.setWindowFlag(QtCore.Qt.WindowCloseButtonHint, False)
         Form.setObjectName("Form")
         Form.setMinimumSize(QtCore.QSize(350, 76))
         Form.setMaximumSize(QtCore.QSize(400, 100))
