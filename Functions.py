@@ -94,7 +94,7 @@ def AddLogo(OriginalImage):
             None
         Background.save(SetupFile.SavedPathWithLogo)
     except:
-        print("Add logo failed")
+        None
 
 
 # method to resize original image.
@@ -124,7 +124,7 @@ def resizeImage(originalImagePath):
                 img = img.resize((ImageWidth, ImageHeight), Resampling.LANCZOS)
         img.save(SetupFile.SavedPathWithResize)
     except:
-        print("Resize Failed")
+        None
 
 
 # Open the test model MainWindow

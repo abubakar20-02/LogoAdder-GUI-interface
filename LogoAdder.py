@@ -314,7 +314,6 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ClearScreen()
         self.ConvertButton.setEnabled(True)
         FilePath = [u.toLocalFile() for u in event.mimeData().urls()]
-        print(str(FilePath[0]))
         name, extension = os.path.splitext(str(FilePath[0]))
         if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG" or extension.upper() == "":
             self.FilePath.setText(str(FilePath[0]))
@@ -365,9 +364,6 @@ class SaveMultipleImages(QObject):
                     name, extension = os.path.splitext(file)
                     if str(extension.upper()) == ".JPEG" or str(extension.upper()) == ".JPG" or str(
                             extension.upper()) == ".PNG":
-                        print(file)
-                        print(str(extension.upper()))
-                        print(os.path.join(dir_path, file))
                         AddLogo(os.path.join(dir_path, file))
                         CurrentNumberOfPhotos = CurrentNumberOfPhotos + 1
                         self.progressbarParameters.emit(CurrentNumberOfPhotos, NumberOfPhotos)
