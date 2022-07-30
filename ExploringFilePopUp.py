@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject
 
+import LogoAdder
 import SetupFile
 
 
@@ -36,7 +37,7 @@ class Ui_Form(QObject):
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
-        Form.setWindowTitle(_translate("Form", "Form"))
+        Form.setWindowTitle(_translate("Form", "Finding images files..."))
         self.Message.setText(_translate("Form", "TextLabel"))
         self.CancelButton.setText(_translate("Form", "Cancel"))
 
@@ -48,6 +49,16 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.setStyleSheet(SetupFile.MainBackground)
         self.CancelButton.setStyleSheet(SetupFile.Button)
         self.Message.setStyleSheet(SetupFile.FilePath)
+        self.setMessage(0)
+
+    def setMessage(self, NumberOfImages):
+        message = " Found " + str(NumberOfImages) + " image files"
+        self.Message.setText(message)
+
+    def closeWindow(self, SystemDriveTriedtoAccess):
+        print(SystemDriveTriedtoAccess)
+        if not SystemDriveTriedtoAccess:
+            self.show()
 
 
 if __name__ == "__main__":

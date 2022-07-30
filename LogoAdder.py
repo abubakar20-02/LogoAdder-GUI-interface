@@ -9,6 +9,7 @@ from PyQt5.QtCore import QObject, Qt, QThread, pyqtSignal, QSemaphore
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QFileDialog, QApplication
 
+import ExploringFilePopUp
 import ImageSettingPage
 import LogoSetting
 import ProgressBar
@@ -68,20 +69,16 @@ def AddLogo(OriginalImage):
     Background = Image.open(SetupFile.SavedPathWithResize)
     if has_transparency(Background):
         Background.convert("RGBA")
-        print("Background transparent")
     else:
         Background.convert("RGB")
-        print("Background not transparent")
     BackgroundWidth = Background.size[0]
     BackgroundHeight = Background.size[1]
     try:
         Logo = Image.open(LogoPath.strip())
         if has_transparency(Logo):
             Logo.convert("RGBA")
-            print("Logo transparent")
         else:
             Logo.convert("RGB")
-            print("Logo not transparent")
         # resize on the scale of the background
         Logo = Logo.resize(
             (int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
@@ -340,6 +337,11 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.window.setMessage(message)
         self.window.show()
 
+    def getExploringFilePopUp(self):
+        self.a = QtWidgets.QMainWindow()
+        self.a = ExploringFilePopUp.MyWindow()
+        return self.a
+
     # function to get the progress bar object.
     def getProgressBar(self):
         self.ProgressBar = QtWidgets.QMainWindow()
@@ -348,33 +350,51 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     # update the main screen with original image and preview of the combined image.
     def update(self):
-        self.updateSingleImageView()
-        self.updateMultipleFileView()
+        name, extension = os.path.splitext(self.FilePath.text())
+        if extension.upper() == "":
+            self.updateMultipleFileView()
+        else:
+            self.updateSingleImageView()
 
     def updateMultipleFileView(self):
+        ExploringFilePopUp1 = self.getExploringFilePopUp()
         name, extension = os.path.splitext(self.FilePath.text())
         if extension == "":
-            global NumberOfPhotos
             dir_path = self.FilePath.text()
-            res = []
-            NumberOfPhotos = 0
-            global PhotoFiles
-            PhotoFiles = []
-            for (dir_path, dir_names, file_names) in walk(dir_path):
-                for file in file_names:
-                    name, extension = os.path.splitext(file)
-                    if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
-                        PhotoFiles.append(file)
-                        NumberOfPhotos = NumberOfPhotos + 1
-                res.extend(file_names)
+            # add to thread
+            # start a thread and move the worker to it.
+            self.my_thread = QThread()
+            self.worker = Worker1(dir_path)
 
-            self.OriginalImage.setText("Loaded from folder")
-            self.OriginalImage.setAlignment(Qt.AlignCenter)
-            self.OriginalImage.setStyleSheet(SetupFile.EmptyImage)
+            # We're connecting things to the correct spots
+            self.worker.moveToThread(self.my_thread)  # move worker to thread.
+            # Note: Ui elements should only be updated via the main thread.
+            self.worker.TotalFiles.connect(ExploringFilePopUp1.setMessage)  # using signal and slots,
+            # update ui elements
+            self.my_thread.started.connect(self.worker.run)
+            self.worker.finished.connect(self.my_thread.quit)  # safely close the thread.
+            self.worker.finished.connect(self.worker.deleteLater)
+            self.worker.finishedAllFiles.connect(self.finished)
+            self.my_thread.finished.connect(self.finishThread)
+            self.worker.SystemDriveTriedtoAccess.connect(self.WarnUser)
+            self.worker.SystemDriveTriedtoAccess.connect(ExploringFilePopUp1.closeWindow)
 
-            self.PreviewImage.setText("No preview for folder\n Number of Images in folder : " + str(NumberOfPhotos))
-            self.PreviewImage.setAlignment(Qt.AlignCenter)
-            self.PreviewImage.setStyleSheet(SetupFile.EmptyImage)
+            self.my_thread.start()
+            # end of thread
+
+    def WarnUser(self, SystemDriveTriedtoAccess):
+        if SystemDriveTriedtoAccess:
+            self.ClearScreen()
+            self.openPopUpWindow("Restricted Access")
+
+    def finished(self):
+        global NumberOfPhotos
+        self.OriginalImage.setText("Loaded from folder")
+        self.OriginalImage.setAlignment(Qt.AlignCenter)
+        self.OriginalImage.setStyleSheet(SetupFile.EmptyImage)
+        self.PreviewImage.setText("No preview for folder\n Number of Images in folder : " + str(NumberOfPhotos))
+        self.PreviewImage.setAlignment(Qt.AlignCenter)
+        self.PreviewImage.setStyleSheet(SetupFile.EmptyImage)
 
     def updateSingleImageView(self):
         name, extension = os.path.splitext(self.FilePath.text())
@@ -410,6 +430,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             event.ignore()
 
     def dropEvent(self, event):
+        self.ConvertButton.setEnabled(True)
         FilePath = [u.toLocalFile() for u in event.mimeData().urls()]
         try:
             for f in FilePath:
@@ -418,14 +439,18 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.FilePath.setText(f)
                     self.update()
                 else:
-                    self.OriginalImage.setStyleSheet(SetupFile.EmptyImage)
-                    self.OriginalImage.setText("")
-                    self.PreviewImage.setStyleSheet(SetupFile.EmptyImage)
-                    self.PreviewImage.setText("")
-                    self.FilePath.setText("")
-                    self.openPopUpWindow("Please drop a folder or an image file")
+                    self.ClearScreen()
+                    self.openPopUpWindow("Please drop a folder or file")
         except:
             None
+
+    def ClearScreen(self):
+        self.OriginalImage.setStyleSheet(SetupFile.EmptyImage)
+        self.OriginalImage.setText("")
+        self.PreviewImage.setStyleSheet(SetupFile.EmptyImage)
+        self.PreviewImage.setText("")
+        self.FilePath.setText("")
+        self.ConvertButton.setEnabled(False)
 
     # when user closes the main MainWindow, remove temp files and close all other sub windows.
     def closeEvent(self, event):
@@ -465,6 +490,35 @@ class Worker(QObject):
                         self.progressbarParameters.emit(CurrentNumberOfPhotos, NumberOfPhotos)
                         img1 = Image.open(SetupFile.SavedPathWithLogo)
                         img1.save(self.directory + "/" + file)
+        self.finished.emit()
+
+
+class Worker1(QObject):
+    TotalFiles = pyqtSignal(int, name="TotalFiles")
+    SystemDriveTriedtoAccess = pyqtSignal(bool)
+    finished = pyqtSignal()
+    finishedAllFiles = pyqtSignal()
+
+    def __init__(self, directory):
+        super(Worker1, self).__init__()
+        self.directory = directory
+
+    def run(self):
+        if self.directory == str(os.getenv("SystemDrive")) + "/":
+            self.SystemDriveTriedtoAccess.emit(True)
+        else:
+            self.SystemDriveTriedtoAccess.emit(False)
+            print(self.directory)
+            global NumberOfPhotos
+            NumberOfPhotos = 0
+            global PhotoFiles
+            for (dir_path, dir_names, file_names) in walk(self.directory):
+                for file in file_names:
+                    name, extension = os.path.splitext(file)
+                    if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                        NumberOfPhotos = NumberOfPhotos + 1
+                        self.TotalFiles.emit(NumberOfPhotos)
+            self.finishedAllFiles.emit()
         self.finished.emit()
 
 
