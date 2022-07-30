@@ -45,12 +45,15 @@ def SaveNewImage():
         if has_transparency(img1):
             savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
                                                            "Output", "Image(*.png)")
+            if check:
+                img1.save(savedFile)
+                os.startfile(savedFile)
         else:
             savedFile, check = QFileDialog.getSaveFileName(None, "Save Image",
                                                            "Output", "Image(*.jpeg);;Image(*.jpg);;Image(*.png)")
-        if check:
-            img1.save(savedFile)
-            os.startfile(savedFile)
+            if check:
+                img1.convert('RGB').save(savedFile)
+                os.startfile(savedFile)
 
 
 # add logo to the image if logo is present, otherwise just resize the image.
