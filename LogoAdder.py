@@ -278,12 +278,13 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if not len(self.FilePath.text()) == 0:
                 ProcessingPopUp.show()
                 self.my_thread = QThread()
-                self.worker = SingleImageView(self.FilePath, self.OriginalImage, self.PreviewImage)
+                self.worker = SingleImageView(self.FilePath)
 
                 # We're connecting things to the correct spots
                 self.worker.moveToThread(self.my_thread)  # move worker to thread.
                 # update ui elements
                 self.my_thread.started.connect(self.worker.run)
+                self.worker.finished.connect(self.updateScreen)
                 self.worker.finished.connect(self.my_thread.quit)  # safely close the thread.
                 self.worker.finished.connect(self.worker.deleteLater)
                 self.worker.finished.connect(ProcessingPopUp.Close)
@@ -291,6 +292,17 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
                 self.my_thread.start()
                 # end of thread
+
+    def updateScreen(self):
+        self.OriginalImage.setText("")
+        self.PreviewImage.setText("")
+        self.OriginalImage.setStyleSheet("QLabel{\n"
+                                         "    border: 1px solid;\n"
+                                         "    image: url(" + self.FilePath.text() + ");\n"
+                                                                                    "background-color: gray;\n "
+                                                                                    "     }\n"
+                                                                                    "")
+        self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
 
     # Open file dialog to import image
     def ImportImage(self):
@@ -411,23 +423,12 @@ class MultipleFileView(QObject):
 class SingleImageView(QObject):
     finished = pyqtSignal()
 
-    def __init__(self, FilePath, OriginalImage, PreviewImage):
+    def __init__(self, FilePath):
         super(SingleImageView, self).__init__()
         self.FilePath = FilePath
-        self.OriginalImage = OriginalImage
-        self.PreviewImage = PreviewImage
 
     def run(self):
-        self.OriginalImage.setText("")
-        self.PreviewImage.setText("")
         AddLogo(self.FilePath.text())
-        self.OriginalImage.setStyleSheet("QLabel{\n"
-                                         "    border: 1px solid;\n"
-                                         "    image: url(" + self.FilePath.text() + ");\n"
-                                                                                    "background-color: gray;\n "
-                                                                                    "     }\n"
-                                                                                    "")
-        self.PreviewImage.setStyleSheet(SetupFile.PreviewImage)
         self.finished.emit()
 
 
