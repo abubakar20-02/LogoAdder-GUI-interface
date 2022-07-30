@@ -213,6 +213,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.updateSingleImageView()
 
     def updateMultipleFileView(self):
+        print("entered again")
         ExploringFilePopUp1 = getExploringFilePopUp(self)
         ExploringFilePopUp1.CancelButton.clicked.connect(self.trial)
         name, extension = os.path.splitext(self.FilePath.text())
@@ -235,7 +236,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.worker.finished.connect(ExploringFilePopUp1.Cancel)
             self.my_thread.finished.connect(self.finishThread)
             self.worker.stop.connect(self.ClearScreen)
-            self.worker.SystemDriveTriedtoAccess.connect(self.WarnUser)
+            self.worker.SystemDriveTriedtoAccess1.connect(self.WarnUser)
             self.worker.SystemDriveTriedtoAccess.connect(ExploringFilePopUp1.closeWindow)
 
             self.my_thread.start()
@@ -245,6 +246,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         print("trial")
         global Stop
         Stop = True
+        self.ClearScreen()
 
     def WarnUser(self, SystemDriveTriedtoAccess):
         if SystemDriveTriedtoAccess:
@@ -299,18 +301,27 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ClearScreen()
         self.ConvertButton.setEnabled(True)
         FilePath = [u.toLocalFile() for u in event.mimeData().urls()]
-        try:
-            for f in FilePath:
-                name, extension = os.path.splitext(f)
-                if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG" or extension.upper() == "":
-                    self.FilePath.setText(f)
-                    print(f)
-                    self.update()
-                else:
-                    self.ClearScreen()
-                    openPopUpWindow(self, "Please drop a folder or file")
-        except:
-            None
+        print(str(FilePath[0]))
+        name, extension = os.path.splitext(str(FilePath[0]))
+        if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG" or extension.upper() == "":
+            self.FilePath.setText(str(FilePath[0]))
+            FilePath = None
+            self.update()
+        else:
+            self.ClearScreen()
+            openPopUpWindow(self, "Please drop a folder or file")
+        # try:
+        #     for f in FilePath:
+        #         name, extension = os.path.splitext(f)
+        #         if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG" or extension.upper() == "":
+        #             self.FilePath.setText(f)
+        #             print(f)
+        #             self.update()
+        #         else:
+        #             self.ClearScreen()
+        #             openPopUpWindow(self, "Please drop a folder or file")
+        # except:
+        #     None
 
     def ClearScreen(self):
         self.OriginalImage.setStyleSheet(SetupFile.EmptyImage)
@@ -352,7 +363,11 @@ class Worker(QObject):
                 else:
                     sem.release(1)
                     name, extension = os.path.splitext(file)
-                    if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                    if str(extension.upper()) == ".JPEG" or str(extension.upper()) == ".JPG" or str(
+                            extension.upper()) == ".PNG":
+                        print(file)
+                        print(str(extension.upper()))
+                        print(os.path.join(dir_path, file))
                         AddLogo(os.path.join(dir_path, file))
                         CurrentNumberOfPhotos = CurrentNumberOfPhotos + 1
                         self.progressbarParameters.emit(CurrentNumberOfPhotos, NumberOfPhotos)
@@ -364,6 +379,7 @@ class Worker(QObject):
 class Worker1(QObject):
     TotalFiles = pyqtSignal(int, name="TotalFiles")
     SystemDriveTriedtoAccess = pyqtSignal(bool)
+    SystemDriveTriedtoAccess1 = pyqtSignal(bool)
     finished = pyqtSignal()
     finishedAllFiles = pyqtSignal()
     stop = pyqtSignal()
@@ -373,26 +389,27 @@ class Worker1(QObject):
         self.directory = directory
 
     def run(self):
-        if self.directory == str(os.getenv("SystemDrive")) + "/":
-            self.SystemDriveTriedtoAccess.emit(True)
-        else:
+        if not self.directory == str(os.getenv("SystemDrive")) + "/":
             self.SystemDriveTriedtoAccess.emit(False)
             global NumberOfPhotos
             NumberOfPhotos = 0
             global Stop
             for (dir_path, dir_names, file_names) in walk(self.directory):
                 if Stop:
-                    self.stop.emit()
                     break
                 for file in file_names:
                     if Stop:
-                        self.stop.emit()
                         break
                     name, extension = os.path.splitext(file)
-                    if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG":
+                    if str(extension.upper()) == ".JPEG" or str(extension.upper()) == ".JPG" or str(
+                            extension.upper()) == ".PNG":
                         NumberOfPhotos = NumberOfPhotos + 1
                         self.TotalFiles.emit(NumberOfPhotos)
         self.finished.emit()
+        if self.directory == str(os.getenv("SystemDrive")) + "/":
+            self.SystemDriveTriedtoAccess1.emit(True)
+        if Stop:
+            self.stop.emit()
 
 
 if __name__ == "__main__":
