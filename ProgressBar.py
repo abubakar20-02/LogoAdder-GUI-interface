@@ -88,12 +88,3 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
     # Method to set directory.
     def setDirectory(self, directory):
         self.directory = directory
-
-
-if __name__ == "__main__":
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = MyWindow()
-    MainWindow.show()
-    sys.exit(app.exec_())

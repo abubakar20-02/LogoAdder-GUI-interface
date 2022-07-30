@@ -1,10 +1,10 @@
-# checks if required folder is present, if it isn't present, it makes the folder.
 import os
 from os.path import exists
+
 from PIL import Image
+from PIL.Image import Resampling  # this is not an error.
+from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
-from PIL.Image import Resampling
-from PyQt5 import QtCore, QtWidgets
 
 import ExploringFilePopUp
 import ImageSettingPage
@@ -15,6 +15,7 @@ import SetupFile
 import popupmsg
 
 
+# checks if required folder is present, if it isn't present, it makes the folder.
 def FolderPresentEnsured(Folder):
     if not exists(Folder):
         os.mkdir(Folder)
@@ -156,10 +157,11 @@ def openPopUpWindow(self, message):
     self.window.show()
 
 
+# get the object of exploring file pop up.
 def getExploringFilePopUp(self):
-    self.a = QtWidgets.QMainWindow()
-    self.a = ExploringFilePopUp.MyWindow()
-    return self.a
+    self.ExploringFilePopUp = QtWidgets.QMainWindow()
+    self.ExploringFilePopUp = ExploringFilePopUp.MyWindow()
+    return self.ExploringFilePopUp
 
 
 # function to get the progress bar object.
@@ -169,7 +171,8 @@ def getProgressBar(self):
     return self.ProgressBar
 
 
+# function to get the processing pop up object.
 def getProcessingPopUp(self):
-    self.a = QtWidgets.QMainWindow()
-    self.a = ProcessingPopUp.MyWindow()
-    return self.a
+    self.ProcessingPopUp = QtWidgets.QMainWindow()
+    self.ProcessingPopUp = ProcessingPopUp.MyWindow()
+    return self.ProcessingPopUp

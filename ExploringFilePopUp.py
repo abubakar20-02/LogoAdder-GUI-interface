@@ -55,23 +55,16 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.setMessage(0)
         self.CancelButton.clicked.connect(self.Cancel)
 
+    # set message to the ui.
     def setMessage(self, NumberOfImages):
         message = " Found " + str(NumberOfImages) + " image files"
         self.Message.setText(message)
 
-    def closeWindow(self, SystemDriveTriedtoAccess):
-        print(SystemDriveTriedtoAccess)
+    # checks if the system drive was accessed, if not then show the exploring file pop up
+    def ShowFileExplorer(self, SystemDriveTriedtoAccess):
         if not SystemDriveTriedtoAccess:
             self.show()
 
+    # When user clicks cancel in the main screen, screen should close.
     def Cancel(self):
         self.close()
-
-
-if __name__ == "__main__":
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = MyWindow()
-    MainWindow.show()
-    sys.exit(app.exec_())

@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QObject, Qt
 from PyQt5.QtGui import QIcon
 
@@ -38,14 +38,7 @@ class MyWindow(QtWidgets.QWidget, Ui_Form):
         self.setStyleSheet(SetupFile.MainBackground)
         self.Message.setStyleSheet(SetupFile.FilePath)
 
+    # Close pop up window.
     def Close(self):
         self.close()
 
-
-if __name__ == "__main__":
-    import sys
-
-    app = QtWidgets.QApplication(sys.argv)
-    MainWindow = MyWindow()
-    MainWindow.show()
-    sys.exit(app.exec_())

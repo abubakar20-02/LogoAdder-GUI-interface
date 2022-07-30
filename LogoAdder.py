@@ -3,11 +3,11 @@ from os import walk
 from PyQt5.QtCore import QObject, Qt, QThread, pyqtSignal, QSemaphore
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication
+from PyQt5 import QtCore
 
 from Functions import *
 
 NumberOfPhotos = 0
-total = 0
 Close = False
 sem = QSemaphore(1)
 Stop = False
@@ -141,10 +141,12 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.ButtonConnections()
         self.MenuBarConnections()
 
+    # Connects buttons to methods.
     def ButtonConnections(self):
         self.ImportImageButton.clicked.connect(self.ImportImage)
         self.ConvertButton.clicked.connect(self.Save)
 
+    # Connects drop down menu attributes to methods.
     def MenuBarConnections(self):
         self.LogoSetting.triggered.connect(lambda: openLogoSetting(self))
         self.ImageSetting.triggered.connect(lambda: openImageSetting(self))
@@ -163,7 +165,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             # start a thread and move the worker to it.
             self.my_thread = QThread()
-            self.worker = Worker(directory, self.FilePath.text(), NumberOfPhotos)
+            self.worker = SaveMultipleImages(directory, self.FilePath.text(), NumberOfPhotos)
 
             # We're connecting things to the correct spots
             self.worker.moveToThread(self.my_thread)  # move worker to thread.
@@ -212,47 +214,50 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             self.updateSingleImageView()
 
+    # updates the main page when a folder is dropped.
     def updateMultipleFileView(self):
-        print("entered again")
-        ExploringFilePopUp1 = getExploringFilePopUp(self)
-        ExploringFilePopUp1.CancelButton.clicked.connect(self.trial)
+        ExploringFilePopUp = getExploringFilePopUp(self)
+        ExploringFilePopUp.CancelButton.clicked.connect(self.CloseExplorerPopUp)
         name, extension = os.path.splitext(self.FilePath.text())
         if extension == "":
             dir_path = self.FilePath.text()
             # add to thread
             # start a thread and move the worker to it.
             self.my_thread = QThread()
-            self.worker = Worker1(dir_path)
+            self.worker = MultipleFileView(dir_path)
 
             # We're connecting things to the correct spots
             self.worker.moveToThread(self.my_thread)  # move worker to thread.
             # Note: Ui elements should only be updated via the main thread.
-            self.worker.TotalFiles.connect(ExploringFilePopUp1.setMessage)  # using signal and slots,
+            self.worker.TotalFiles.connect(ExploringFilePopUp.setMessage)  # using signal and slots,
             # update ui elements
             self.my_thread.started.connect(self.worker.run)
             self.worker.finished.connect(self.my_thread.quit)  # safely close the thread.
             self.worker.finished.connect(self.worker.deleteLater)
             self.worker.finished.connect(self.finished)
-            self.worker.finished.connect(ExploringFilePopUp1.Cancel)
+            self.worker.finished.connect(ExploringFilePopUp.Cancel)
             self.my_thread.finished.connect(self.finishThread)
             self.worker.stop.connect(self.ClearScreen)
             self.worker.SystemDriveTriedtoAccess1.connect(self.WarnUser)
-            self.worker.SystemDriveTriedtoAccess.connect(ExploringFilePopUp1.closeWindow)
+            self.worker.SystemDriveTriedtoAccess.connect(ExploringFilePopUp.ShowFileExplorer)
 
             self.my_thread.start()
             # end of thread
 
-    def trial(self):
-        print("trial")
+    # Closes the explorer pop up.
+    def CloseExplorerPopUp(self):
         global Stop
         Stop = True
         self.ClearScreen()
 
+    # Warns user if system drive tried to access. The reason why system drive is not allowed is that they also
+    # contain temp files, recycle bin as well which might change when we try to process that image.
     def WarnUser(self, SystemDriveTriedtoAccess):
         if SystemDriveTriedtoAccess:
             self.ClearScreen()
             openPopUpWindow(self, "Restricted Access")
 
+    # Once all the image files are found we update the main screen.
     def finished(self):
         global NumberOfPhotos
         global Stop
@@ -264,6 +269,8 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.PreviewImage.setStyleSheet(SetupFile.EmptyImage)
         Stop = False
 
+    # update screen when single file added.
+    # used multithreading as processing can take time.
     def updateSingleImageView(self):
         ProcessingPopUp = getProcessingPopUp(self)
         name, extension = os.path.splitext(self.FilePath.text())
@@ -271,7 +278,7 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if not len(self.FilePath.text()) == 0:
                 ProcessingPopUp.show()
                 self.my_thread = QThread()
-                self.worker = Worker2(self.FilePath, self.OriginalImage, self.PreviewImage)
+                self.worker = SingleImageView(self.FilePath, self.OriginalImage, self.PreviewImage)
 
                 # We're connecting things to the correct spots
                 self.worker.moveToThread(self.my_thread)  # move worker to thread.
@@ -311,23 +318,10 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         name, extension = os.path.splitext(str(FilePath[0]))
         if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG" or extension.upper() == "":
             self.FilePath.setText(str(FilePath[0]))
-            FilePath = None
             self.update()
         else:
             self.ClearScreen()
             openPopUpWindow(self, "Please drop a folder or file")
-        # try:
-        #     for f in FilePath:
-        #         name, extension = os.path.splitext(f)
-        #         if extension.upper() == ".JPEG" or extension.upper() == ".JPG" or extension.upper() == ".PNG" or extension.upper() == "":
-        #             self.FilePath.setText(f)
-        #             print(f)
-        #             self.update()
-        #         else:
-        #             self.ClearScreen()
-        #             openPopUpWindow(self, "Please drop a folder or file")
-        # except:
-        #     None
 
     def ClearScreen(self):
         self.OriginalImage.setStyleSheet(SetupFile.EmptyImage)
@@ -347,12 +341,12 @@ class MyWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             window.close()
 
 
-class Worker(QObject):
+class SaveMultipleImages(QObject):
     progressbarParameters = pyqtSignal(int, int, name="ProgressBarParameters")
     finished = pyqtSignal()
 
     def __init__(self, directory, FilePath, TotalNumberOfPhotos):
-        super(Worker, self).__init__()
+        super(SaveMultipleImages, self).__init__()
         self.directory = directory
         self.FilePath = FilePath
         self.NumberOfPhotos = TotalNumberOfPhotos
@@ -382,7 +376,7 @@ class Worker(QObject):
         self.finished.emit()
 
 
-class Worker1(QObject):
+class MultipleFileView(QObject):
     TotalFiles = pyqtSignal(int, name="TotalFiles")
     SystemDriveTriedtoAccess = pyqtSignal(bool)
     SystemDriveTriedtoAccess1 = pyqtSignal(bool)
@@ -391,7 +385,7 @@ class Worker1(QObject):
     stop = pyqtSignal()
 
     def __init__(self, directory):
-        super(Worker1, self).__init__()
+        super(MultipleFileView, self).__init__()
         self.directory = directory
 
     def run(self):
@@ -418,11 +412,11 @@ class Worker1(QObject):
             self.stop.emit()
 
 
-class Worker2(QObject):
+class SingleImageView(QObject):
     finished = pyqtSignal()
 
     def __init__(self, FilePath, OriginalImage, PreviewImage):
-        super(Worker2, self).__init__()
+        super(SingleImageView, self).__init__()
         self.FilePath = FilePath
         self.OriginalImage = OriginalImage
         self.PreviewImage = PreviewImage
