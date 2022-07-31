@@ -9,6 +9,7 @@ A simple windows application built to add logo to an image. What make's this app
 * [Note](#Note)
 * [Adding files](#AddingFiles)
 * [Settings](#Setting)
+* [Future Improvements](#FutureImporvements)
 
 # <a name="libraries"></a>
 ## Libraries 💻
@@ -70,9 +71,10 @@ User is given 2 setting options, logo setting and image setting.
  <h4>Logo Setting</h4>
  User are not required to add logo as it is optional. If they do not want the logo to appear, they simply have to set logo size width or height to 0. If they wish to have a logo, they have to select a logo followed by the size and position.
   <br clear="right"/>
-  <br><hr><br><br>
+  <br><br><br>
 </p>
 
+<a name="FutureImporvements"></a>
 # Future improvements
 As of now the project is deemed complete and in the future this is all I would like to work on:
 * Drag and drop for logo settings.
