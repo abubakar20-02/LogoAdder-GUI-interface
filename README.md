@@ -73,7 +73,7 @@ User is given 2 setting options, logo setting and image setting.
   <br><hr><br><br>
 </p>
 
-#Future improvements
+# Future improvements
 As of now the project is deemed complete and in the future this is all I would like to work on:
 * Drag and drop for logo settings.
 * Have a feature to maintain logo aspect ratio
