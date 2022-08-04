@@ -63,17 +63,17 @@ def AddLogo(OriginalImage):
         resizeImage(OriginalImage)
         Background = Image.open(SetupFile.SavedPathWithResize)
         if has_transparency(Background):
-            Background.convert("RGBA")
+            Background = Background.convert("RGBA")
         else:
-            Background.convert("RGB")
+            Background = Background.convert("RGB")
         BackgroundWidth = Background.size[0]
         BackgroundHeight = Background.size[1]
         try:
             Logo = Image.open(LogoPath.strip())
             if has_transparency(Logo):
-                Logo.convert("RGBA")
+                Logo = Logo.convert("RGBA")
             else:
-                Logo.convert("RGB")
+                Logo = Logo.convert("RGB")
             # resize on the scale of the background
             Logo = Logo.resize(
                 (int((LogoSizeWidth / 100) * BackgroundWidth), int((LogoSizeHeight / 100) * BackgroundHeight)))
