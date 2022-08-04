@@ -2,13 +2,14 @@
 
 A simple windows application built to add logo to an image. What make's this application unique is that the user can drop a folder and it would add logo to all images in the folder.
 
- The setup.exe file can be download from [here](https://drive.google.com/file/d/1BHmvWUe4SeQHkNdReyuCc0K4RMXZ9-ux/view?usp=sharing), simply run the setup file to install the software.
+ The setup.exe file can be download from [here](https://drive.google.com/file/d/1OYgdW_YyFazmK3UFs4F021EygYdyOoQn/view?usp=sharing), simply run the setup file to install the software.
 
 ## Table of Contents 📘
 * [Libraries](#libraries)
 * [Note](#Note)
 * [Adding files](#AddingFiles)
 * [Settings](#Setting)
+* [Future Improvements](#FutureImporvements)
 
 # <a name="libraries"></a>
 ## Libraries 💻
@@ -72,3 +73,11 @@ User is given 2 setting options, logo setting and image setting.
   <br clear="right"/>
   <br><br><br>
 </p>
+
+<a name="FutureImporvements"></a>
+# Future improvements
+As of now the project is deemed complete and in the future this is all I would like to work on:
+* Drag and drop for logo settings.
+* Have a feature to maintain logo aspect ratio
+* Have the ability to change the position of the logo by dragging it.
+* Add more features to change logo and background.
